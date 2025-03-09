@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head><title>E-Commerce Mock</title></head>
+<body>
+  <h1>Products</h1>
+  <ul id="product-list"></ul>
+  <a href="/cart">Go to Cart</a>
+  <script>
+    fetch('/products')
+      .then(res => res.json())
+      .then(data => {
+        const list = document.getElementById('product-list');
+        data.forEach(p => {
+          const li = document.createElement('li');
+          li.textContent = `${p.name} - $${p.price}`;
+          list.appendChild(li);
+        });
+      });
+  </script>
+</body>
+</html>
