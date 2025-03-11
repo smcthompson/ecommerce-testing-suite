@@ -128,3 +128,11 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Portfolio Project
+EcommercePlaywrightTests/dist/
+EcommerceSeleniumTests/bin/
+EcommerceSeleniumTests/obj/
+*.vs/
+*.user
+*.suo
