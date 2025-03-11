@@ -130,6 +130,7 @@ dist
 .pnp.*
 
 # Portfolio Project
+test-results/
 EcommercePlaywrightTests/dist/
 EcommerceSeleniumTests/bin/
 EcommerceSeleniumTests/obj/
