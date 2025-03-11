@@ -1,6 +1,8 @@
-### Project Phase 1: "Automated E-Commerce Testing Suite" (Continued)
+# Step 4 Notes
 
-#### Step 4: Optimize and Benchmark
+## Project Phase 1: "Automated E-Commerce Testing Suite" (Continued)
+
+### Step 4: Optimize and Benchmark
 
 **Objective**: Optimize the performance of your e-commerce mock site and benchmark the execution times of your Selenium and Playwright tests to establish a baseline for future improvements.  
 **Tools**: Node.js, Visual Studio 2022 (for Selenium), Visual Studio Code (for Playwright), Chrome DevTools, and `autocannon` for load testing.  
@@ -212,7 +214,7 @@
 
 ---
 
-### Notes for This Step
+## Notes for This Step
 
 - **Performance Goals**:
   - Selenium: Reduce setup/teardown overhead by reusing the browser.
@@ -225,7 +227,7 @@
 
 ---
 
-### Updates for Blogging
+## Updates for Blogging
 
 I’ll include in the Phase 1 blog post:
 
@@ -236,7 +238,7 @@ I’ll include in the Phase 1 blog post:
 
 ---
 
-### Next Steps After Step 4
+## Next Steps After Step 4
 
 Once optimization and benchmarking are complete:
 
