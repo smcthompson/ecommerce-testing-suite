@@ -132,6 +132,7 @@ dist
 # Portfolio Project
 test-results/
 EcommercePlaywrightTests/dist/
+EcommerceApiTests/dist/
 EcommerceSeleniumTests/bin/
 EcommerceSeleniumTests/obj/
 *.vs/
