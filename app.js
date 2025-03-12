@@ -1,18 +1,17 @@
 const express = require('express');
 const compression = require('compression');
+const knex = require('knex')(require('./knexfile'));
 const app = express();
 const port = 3000;
 
 app.use(compression());
 app.use(express.static('public'));
 
-// Mock product data
-const products = [
-  { id: 1, name: 'Laptop', price: 999 },
-  { id: 2, name: 'Mouse', price: 29 },
-];
+app.get('/products', async (req, res) => {
+  const products = await knex('products').select('*');
+  res.json(products);
+});
 
-app.get('/products', (req, res) => res.json(products));
 app.get('/cart', (req, res) => {
   res.send(`
     <!DOCTYPE html>
