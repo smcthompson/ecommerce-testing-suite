@@ -1,4 +1,25 @@
-# Create Portfolio Project
+# E-Commerce Testing Suite
+
+A Node.js mock e-commerce site with automated tests using Selenium (C#), Playwright (TypeScript), and Cucumber (TypeScript). Hosted locally on IIS.
+
+## Setup
+
+1. Clone repo: `git clone https://github.com/smcthompson/ecommerce-testing-suite.git`
+2. Install: `npm install`
+3. Run: `node app.js`
+4. Tests:
+   - Playwright: `cd EcommercePlaywrightTests && npx playwright test`
+   - Selenium: Open `EcommerceSeleniumTests.sln` in Visual Studio and run tests.
+   - Cucumber API Tests: `cd EcommerceApiTests && npm test`
+
+## Features
+
+- UI tests for product list and cart navigation (Selenium, Playwright).
+- Enhanced `/cart` route with UI elements.
+- Headless testing with Playwright across Chromium, Firefox, and WebKit.
+- BDD-driven API tests for `/products`, `/cart`, and `/checkout` using Cucumber.
+
+## Original Concept
 
 I love the enthusiasm—your vision of a dual-purpose project series that doubles as a portfolio *and* a blog showcase is spot-on! We’ll tackle this in two stages: first, I’ll flesh out each of the five project phases one-by-one with detailed steps, code snippets, and setup guides to get you up and running. Once each phase is live, we’ll distill our notes into a blog post—announcing the project, weaving in your ZenBook Duo journey, and selling your skills to recruiters. It’s a brilliant loop: the projects prove your QA and dev chops, while the blog markets them with storytelling flair. Let’s dive into **Phase 1** now, and we’ll iterate through the rest as you complete each one.
 
