@@ -12,7 +12,11 @@ test.describe('E-Commerce Site Tests', () => {
 
   test('Cart navigation works', async ({ page }) => {
     await page.click('text=Go to Cart');
-    const pageContent = await page.evaluate(() => document.documentElement.innerText);
-    expect(pageContent).toMatch(/Cart Page/);
+    await page.waitForURL('**/cart');
+    // Verify cart page elements
+    await expect(page.locator('h1')).toHaveText('Cart Page');
+    await expect(page.locator('#cart-items li')).toHaveCount(2);
+    await expect(page.locator('#checkout-button')).toBeVisible();
+    await expect(page.locator('text=Back to Products')).toBeVisible();
   });
 });
