@@ -17,9 +17,7 @@ app.get('/cart', (req, res) => {
   res.send(`
     <!DOCTYPE html>
     <html>
-    <head>
-      <title>Cart Page</title>
-    </head>
+    <head><title>Cart Page</title></head>
     <body>
       <h1>Cart Page</h1>
       <ul id="cart-items">
