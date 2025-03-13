@@ -18,4 +18,15 @@ test.describe('E-Commerce Site Tests', () => {
     await expect(page.locator('#checkout-button')).toBeVisible();
     await expect(page.locator('text=Back to Products')).toBeVisible();
   });
+
+  test('Add item to cart', async ({ page }) => {
+    // Click the "Add to Cart" button for the first product (Laptop)
+    await page.click('li:has-text("Laptop - $999") button');
+    // Navigate to cart
+    await page.click('#go-to-cart');
+    await page.waitForURL('**/cart**');
+    // Verify the cart contains the added item
+    await expect(page.locator('#cart-items li')).toContainText('Laptop - $999');
+    await expect(page.locator('#cart-items li')).toHaveCount(1);
+  });
 });
