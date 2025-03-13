@@ -15,6 +15,15 @@
         data.forEach(p => {
           const li = document.createElement('li');
           li.textContent = `${p.name} - $${p.price}`;
+          const button = document.createElement('button');
+          button.textContent = 'Add to Cart';
+          button.onclick = () => {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart.push(p);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            alert(`${p.name} added to cart!`);
+          };
+          li.appendChild(button);
           list.appendChild(li);
         });
       });
