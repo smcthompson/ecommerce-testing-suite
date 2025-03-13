@@ -13,16 +13,18 @@ app.get('/products', async (req, res) => {
 });
 
 app.get('/cart', (req, res) => {
+  // For now, we'll assume cart items are passed via query params or mocked
+  const cartItems = req.query.items ? JSON.parse(req.query.items) : [];
+  const cartHtml = cartItems.length > 0
+    ? cartItems.map(item => `<li>${item.name} - $${item.price}</li>`).join('')
+    : '<li>No items in cart</li>';
   res.send(`
     <!DOCTYPE html>
     <html>
     <head><title>Cart Page</title></head>
     <body>
       <h1>Cart Page</h1>
-      <ul id="cart-items">
-        <li>Laptop - $999</li>
-        <li>Mouse - $29</li>
-      </ul>
+      <ul id="cart-items">${cartHtml}</ul>
       <button id="checkout-button">Proceed to Checkout</button>
       <a href="/">Back to Products</a>
     </body>

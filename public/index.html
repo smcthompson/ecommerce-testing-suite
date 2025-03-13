@@ -6,7 +6,7 @@
 <body>
   <h1>Products</h1>
   <ul id="product-list"></ul>
-  <a href="/cart">Go to Cart</a>
+  <a href="#" id="go-to-cart">Go to Cart</a>
   <script>
     fetch('/products')
       .then(res => res.json())
@@ -27,6 +27,12 @@
           list.appendChild(li);
         });
       });
+
+    document.getElementById('go-to-cart').onclick = (e) => {
+      e.preventDefault();
+      const cart = JSON.parse(localStorage.getItem('cart')) || [];
+      window.location.href = `/cart?items=${encodeURIComponent(JSON.stringify(cart))}`;
+    };
   </script>
 </body>
 </html>
