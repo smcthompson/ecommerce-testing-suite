@@ -11,7 +11,6 @@ test.describe('E-Commerce Site Tests', () => {
   });
 
   test('Cart navigation works', async ({ page }) => {
-    // Verify cart page elements
     await page.click('#go-to-cart');
     await page.waitForURL('**/cart**');
     await expect(page.locator('h1')).toHaveText('Cart Page');

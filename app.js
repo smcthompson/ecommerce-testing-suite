@@ -31,6 +31,7 @@ app.get('/cart', (req, res) => {
     </html>
   `);
 });
+
 app.get('/checkout', (req, res) => res.send('Checkout Complete'));
 
 app.listen(port, () => console.log(`Running on http://localhost:${port}`));
