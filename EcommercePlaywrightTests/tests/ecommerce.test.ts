@@ -1,8 +1,13 @@
 import { test, expect } from '@playwright/test';
 
+// Use environment variable for base URL, default to 8080 for local dev
+const BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
+
 test.describe('E-Commerce Site Tests', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('http://localhost:8080');
+    await page.goto(BASE_URL);
+    // Wait for the product list to load
+    await page.waitForSelector('#product-list li');
   });
 
   test('Product list loads', async ({ page }) => {

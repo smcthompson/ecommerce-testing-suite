@@ -2,7 +2,7 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import request from 'supertest';
 import { expect } from 'chai';
 
-const baseUrl = 'http://localhost:8080';
+const baseUrl = process.env.BASE_URL || 'http://localhost:8080';
 
 Given('the API is running', async function () {
   // Ensure the server is running (assumed to be up for tests)
