@@ -16,10 +16,12 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '22.14.0'
-    - name: Install Dependencies
+    - name: Install Application Dependencies
       run: npm install
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Install Test Dependencies
+      run: cd EcommercePlaywrightTests && npm install
     - name: Run Playwright Tests
       run: cd EcommercePlaywrightTests && npx playwright test
     - name: Run Cucumber API Tests
