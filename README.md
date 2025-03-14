@@ -1,23 +1,89 @@
 # E-Commerce Testing Suite
 
-A Node.js mock e-commerce site with automated tests using Selenium (C#), Playwright (TypeScript), and Cucumber (TypeScript). Hosted locally on IIS.
+A Node.js mock e-commerce site with automated tests using Selenium (C#), Playwright (TypeScript), and Cucumber (TypeScript). Hosted locally on IIS, with SQLite database and CI/CD integration via GitHub Actions.
 
 ## Setup
 
-1. Clone repo: `git clone https://github.com/smcthompson/ecommerce-testing-suite.git`
-2. Install: `npm install`
-3. Run: `node app.js`
-4. Tests:
+1. Clone the repository:
+
+    ```bash
+    git clone https://github.com/smcthompson/ecommerce-testing-suite.git
+    cd ecommerce-testing-suite
+    ```
+
+2. Install root project dependencies:
+
+    ```bash
+    npm install
+    ```
+
+3. Install sub-project dependencies:
+
+   - For Playwright tests:
+
+      ```bash
+      cd EcommercePlaywrightTests
+      npm install
+      ```
+
+   - For Cucumber API tests:
+
+      ```bash
+      cd EcommerceApiTests
+      npm install
+      ```
+
+4. Set up the SQLite database:
+
+   - Ensure `sqlite3` and `knex` are installed (handled by root `npm install`).
+
+   - Run migrations and seeds:
+
+      ```bash
+      npx knex migrate:latest
+      npx knex seed:run
+      ```
+
+5. Run the Node.js server:
+
+    ```bash
+    node app.js
+    ```
+
+6. (Optional) Host on IIS locally:
+
+   - Open IIS Manager, add a new site named `EcommerceMock`, set the physical path to `ecommerce-mock/public`, and bind to port 8080.
+
+   - Configure `web.config` for proxying (as per Phase 1 setup).
+
+   - Run `node app.js` in the background or use `pm2 start app.js`.
+
+7. Run tests:
+
    - Playwright: `cd EcommercePlaywrightTests && npx playwright test`
+
    - Selenium: Open `EcommerceSeleniumTests.sln` in Visual Studio and run tests.
+
    - Cucumber API Tests: `cd EcommerceApiTests && npm test`
 
 ## Features
 
-- UI tests for product list and cart navigation (Selenium, Playwright).
-- Enhanced `/cart` route with UI elements.
+- UI tests for product list, cart navigation, and adding items to cart (Selenium, Playwright).
+- Enhanced `/cart` route with UI elements and dynamic rendering based on query parameters.
 - Headless testing with Playwright across Chromium, Firefox, and WebKit.
-- BDD-driven API tests for `/products`, `/cart`, and `/checkout` using Cucumber.
+- BDD-driven API tests for `/products`, `/cart`, and `/checkout` using Cucumber, updated for dynamic cart state.
+- SQLite database for dynamic product data managed with Knex.js.
+- CI/CD pipeline with GitHub Actions to automate Playwright and Cucumber tests.
+
+## Running in CI
+
+- The GitHub Actions workflow (`ci.yml`) automatically runs tests on push or pull request to the `main` branch.
+- The Node.js server is started using `pm2` on port 3000, and tests target `http://localhost:3000`.
+
+## Notes
+
+- Locally, use IIS on port 8080 with proxying to Node.js on port 3000.
+- In CI, the server runs directly on port 3000 without IIS.
 
 ## Original Concept
 
