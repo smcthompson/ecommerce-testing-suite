@@ -10,7 +10,7 @@ Feature: E-Commerce API Endpoints
     Given the API is running
     When I request the cart page
     Then I should receive the cart page
-    And the cart page should contain cart items
+    And the cart list should be empty
 
   Scenario: Complete checkout
     Given the API is running

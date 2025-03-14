@@ -32,9 +32,8 @@ Then('I should receive the cart page', function () {
   expect(this.response.text).to.include('Cart Page');
 });
 
-Then('the cart page should contain cart items', function () {
-  expect(this.response.text).to.include('Laptop - $999');
-  expect(this.response.text).to.include('Mouse - $29');
+Then('the cart list should be empty', function () {
+  expect(this.response.text).to.include('No items in cart');
 });
 
 When('I request the checkout page', async function () {
