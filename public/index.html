@@ -6,8 +6,9 @@
 <body>
   <h1>Products</h1>
   <ul id="product-list"></ul>
-  <a href="#" id="go-to-cart">Go to Cart</a>
+  <a href="/cart" id="go-to-cart">Go to Cart</a>
   <script>
+    // Load products
     fetch('/products')
       .then(res => res.json())
       .then(data => {
@@ -18,21 +19,20 @@
           const button = document.createElement('button');
           button.textContent = 'Add to Cart';
           button.onclick = () => {
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            cart.push(p);
-            localStorage.setItem('cart', JSON.stringify(cart));
-            alert(`${p.name} added to cart!`);
+            fetch('/cart/add', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ product_id: p.id, quantity: 1 })
+            })
+              .then(res => res.json())
+              .then(data => alert(data.message))
+              .catch(err => console.error('Error adding to cart:', err));
           };
           li.appendChild(button);
           list.appendChild(li);
         });
-      });
-
-    document.getElementById('go-to-cart').onclick = (e) => {
-      e.preventDefault();
-      const cart = JSON.parse(localStorage.getItem('cart')) || [];
-      window.location.href = `/cart?items=${encodeURIComponent(JSON.stringify(cart))}`;
-    };
+      })
+      .catch(err => console.error('Error fetching products:', err));
   </script>
 </body>
 </html>
