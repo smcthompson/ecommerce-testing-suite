@@ -130,6 +130,7 @@ dist
 .pnp.*
 
 # Portfolio Project
+snippets/
 test-results/
 EcommercePlaywrightTests/dist/
 EcommerceApiTests/dist/
