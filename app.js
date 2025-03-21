@@ -25,17 +25,17 @@ app.post('/cart/add', async (req, res) => {
   console.log('Adding to cart:', { session_id: req.session_id, product_id: req.body.product_id, quantity: req.body.quantity });
   try {
     const existingItem = await knex('cart')
-      .where({ session_id: req.session_id, product_id })
+      .where({ session_id: req.session_id, product_id: req.body.product_id })
       .first();
     if (existingItem) {
       await knex('cart')
-        .where({ session_id: req.session_id, product_id })
-        .increment('quantity', quantity);
+        .where({ session_id: req.session_id, product_id: req.body.product_id })
+        .increment('quantity', req.body.quantity);
     } else {
       await knex('cart').insert({
         session_id: req.session_id,
-        product_id,
-        quantity,
+        product_id: req.body.product_id,
+        quantity: req.body.quantity,
       });
     }
     res.status(200).json({ message: 'Item added to cart' });
