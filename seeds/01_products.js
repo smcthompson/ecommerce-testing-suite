@@ -1,9 +1,7 @@
-exports.seed = function (knex) {
-    return knex('products').del()
-        .then(() => {
-            return knex('products').insert([
-                { name: 'Laptop', price: 999 },
-                { name: 'Mouse', price: 29 }
-            ]);
-        });
+exports.seed = async function (knex) {
+    await knex('products').del();
+    await knex('products').insert([
+        { id: 1, name: 'Laptop', price: 999 },
+        { id: 2, name: 'Mouse', price: 29 },
+    ]);
 };
