@@ -8,8 +8,17 @@
   <ul id="product-list"></ul>
   <a href="/cart" id="go-to-cart">Go to Cart</a>
   <script>
-    // Load products
-    fetch('/products')
+    // Get session ID from request header (set by Playwright)
+    const getSessionId = () => {
+      return new URLSearchParams(window.location.search).get('session_id') ||
+             document.cookie.split('; ').find(row => row.startsWith('session_id='))?.split('=')[1] ||
+             'default-session'; // Fallback if no header is set
+    };
+
+    const sessionId = getSessionId();
+    fetch('/products', {
+      headers: { 'X-Session-ID': sessionId }
+    })
       .then(res => res.json())
       .then(data => {
         const list = document.getElementById('product-list');
@@ -21,7 +30,10 @@
           button.onclick = () => {
             fetch('/cart/add', {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Session-ID': sessionId
+              },
               body: JSON.stringify({ product_id: p.id, quantity: 1 })
             })
               .then(res => res.json())

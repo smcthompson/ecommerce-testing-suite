@@ -10,7 +10,7 @@ app.use(express.json()); // For parsing JSON request bodies
 
 // Middleware to mock a session ID (replace with proper session management in future)
 app.use((req, res, next) => {
-  req.session_id = 'mock-session-123'; // Mock session ID for now
+  req.session_id = req.headers['x-session-id'] || 'default-session';
   next();
 });
 
@@ -22,7 +22,7 @@ app.get('/products', async (req, res) => {
 
 // Add item to cart
 app.post('/cart/add', async (req, res) => {
-  const { product_id, quantity = 1 } = req.body;
+  console.log('Adding to cart:', { session_id: req.session_id, product_id: req.body.product_id, quantity: req.body.quantity });
   try {
     const existingItem = await knex('cart')
       .where({ session_id: req.session_id, product_id })
@@ -62,7 +62,7 @@ app.get('/cart', async (req, res) => {
         <h1>Cart Page</h1>
         <ul id="cart-items">${cartHtml}</ul>
         <button id="checkout-button">Proceed to Checkout</button>
-        <a href="/">Back to Products</a>
+        <a href="/?session_id=${encodeURIComponent(req.session_id)}">Back to Products</a>
       </body>
       </html>
     `);

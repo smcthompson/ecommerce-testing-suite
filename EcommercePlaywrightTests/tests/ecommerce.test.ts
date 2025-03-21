@@ -1,12 +1,22 @@
 import { test, expect } from '@playwright/test';
 
-// Use environment variable for base URL, default to 8080 for local dev
 const BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
 
 test.describe('E-Commerce Site Tests', () => {
+  let sessionId: string; // Store session ID for the test run
+
   test.beforeEach(async ({ page }) => {
-    await page.goto(BASE_URL);
-    // Wait for the product list to load
+    sessionId = `test-session-${Date.now()}`; // Generate once per test
+    const response = await fetch(`${BASE_URL}/cart/clear`, {
+      method: 'POST',
+      headers: { 'X-Session-ID': sessionId },
+    });
+    const result = await response.json();
+    if (response.status !== 200) {
+      throw new Error(`Failed to clear cart: ${result.error || response.statusText}`);
+    }
+    await page.setExtraHTTPHeaders({ 'X-Session-ID': sessionId });
+    await page.goto(`${BASE_URL}?session_id=${encodeURIComponent(sessionId)}`);
     await page.waitForSelector('#product-list li');
   });
 
@@ -25,13 +35,13 @@ test.describe('E-Commerce Site Tests', () => {
   });
 
   test('Add item to cart', async ({ page }) => {
-    // Click the "Add to Cart" button for the first product (Laptop)
+    const cartAddResponse = page.waitForResponse('**/cart/add');
+    await page.waitForSelector('li:has-text("Laptop - $999") button', { state: 'visible' });
     await page.click('li:has-text("Laptop - $999") button');
-    // Navigate to cart
-    await page.click('#go-to-cart');
+    await cartAddResponse;
+    await page.goto(`${BASE_URL}/cart?session_id=${encodeURIComponent(sessionId)}`);
     await page.waitForURL('**/cart**');
-    // Verify the cart contains the added item
-    await expect(page.locator('#cart-items li')).toContainText('Laptop - $999');
+    await expect(page.locator('#cart-items li')).toContainText('Laptop - $999 (Qty: 1)');
     await expect(page.locator('#cart-items li')).toHaveCount(1);
   });
 });
