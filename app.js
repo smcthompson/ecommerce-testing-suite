@@ -22,7 +22,6 @@ app.get('/products', async (req, res) => {
 
 // Add item to cart
 app.post('/cart/add', async (req, res) => {
-  console.log('Adding to cart:', { session_id: req.session_id, product_id: req.body.product_id, quantity: req.body.quantity });
   try {
     const existingItem = await knex('cart')
       .where({ session_id: req.session_id, product_id: req.body.product_id })
