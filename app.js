@@ -1,5 +1,7 @@
 const express = require('express');
 const compression = require('compression');
+const session = require('express-session');
+const { ConnectSessionKnexStore } = require('connect-session-knex');
 const knex = require('knex')(require('./knexfile'));
 const app = express();
 const port = 3000;
@@ -8,9 +10,41 @@ app.use(compression());
 app.use(express.static('public'));
 app.use(express.json()); // For parsing JSON request bodies
 
-// Middleware to mock a session ID (replace with proper session management in future)
+// Configure session store
+const store = new ConnectSessionKnexStore({
+  knex,
+  tablename: 'sessions',
+  createTable: true,
+  sidfieldname: 'sid',
+  logErrors: (err) => {
+    console.error('Session store error:', err);
+  },
+});
+// Add logging for session store operations
+store.on('error', (err) => {
+  console.error("on('error')", err);
+});
+
+// Initialize Express app
+const app = express();
+// Session middleware
+app.use(session({
+  secret: 'your-secret-key',
+  resave: false,
+  saveUninitialized: false,
+  store: store,
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000,
+    secure: true,
+    httpOnly: true,
+    sameSite: 'lax',
+    path: '/',
+  },
+}));
+// Middleware to set user_id and session_id in req
 app.use((req, res, next) => {
-  req.session_id = req.headers['x-session-id'] || 'default-session';
+  req.user_id = req.session.userId || null;
+  req.session_id = req.session.id;
   next();
 });
 
