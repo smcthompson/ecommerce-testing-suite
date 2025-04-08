@@ -1,11 +1,24 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import request from 'supertest';
 import { expect } from 'chai';
+import https from 'https';
 
-const baseUrl = process.env.BASE_URL || 'http://localhost:8080';
+// Load the certificates for the HTTPS agent
+const certOptions = {
+  key: fs.readFileSync('../certs/iis-localhost.key'),
+  cert: fs.readFileSync('../certs/iis-localhost.crt'),
+  ca: fs.readFileSync('../certs/iis-localhost.crt'), // Use the same cert as CA for self-signed
+};
+
+// Create a custom HTTPS agent with the certificates
+const agent = new https.Agent(certOptions);
+
+const baseUrl = process.env.BASE_URL || 'https://localhost:3000';
 
 Given('the API is running', async function () {
-  const res = await request(baseUrl).get('/');
+  const res = await request(baseUrl)
+    .get('/')
+    .agent(agent); // Use the custom agent with certificates
   expect(res.status).to.equal(200);
 });
 

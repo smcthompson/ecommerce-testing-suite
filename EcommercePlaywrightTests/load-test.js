@@ -1,7 +1,7 @@
 const autocannon = require('autocannon');
 
 const instance = autocannon({
-  url: 'http://localhost:8080',
+  url: 'https://localhost:8080',
   connections: 10,
   duration: 10,
   requests: [

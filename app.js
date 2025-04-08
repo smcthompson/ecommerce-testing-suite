@@ -5,10 +5,20 @@ const { ConnectSessionKnexStore } = require('connect-session-knex');
 const knex = require('knex')(require('./knexfile'));
 const app = express();
 const port = 3000;
+const https = require('https');
 
 app.use(compression());
 app.use(express.static('public'));
 app.use(express.json()); // For parsing JSON request bodies
+// Configre HTTP server
+const protocol = process.env.PROTOCOL || 'https';
+const host = process.env.HOST || 'localhost';
+const port = process.env.PORT || 3000;
+const apiRoot = `${protocol}://${host}:${port}`;
+const httpsOptions = {
+  key: fs.readFileSync('certs/iis-localhost.key'),
+  cert: fs.readFileSync('certs/iis-localhost.crt'),
+};
 
 // Configure session store
 const store = new ConnectSessionKnexStore({
@@ -116,4 +126,5 @@ app.post('/cart/clear', async (req, res) => {
 
 app.get('/checkout', (req, res) => res.send('Checkout Complete'));
 
-app.listen(port, () => console.log(`Running on http://localhost:${port}`));
+https.createServer(httpsOptions, app).listen(port, () => {
+});

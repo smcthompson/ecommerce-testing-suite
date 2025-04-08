@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = process.env.BASE_URL || 'http://localhost:8080';
+const BASE_URL = process.env.BASE_URL || 'https://localhost:8080';
 
 test.describe('E-Commerce Site Tests', () => {
   let sessionId: string; // Store session ID for the test run

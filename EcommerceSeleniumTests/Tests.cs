@@ -6,17 +6,38 @@ namespace EcommerceSeleniumTests
     public class Tests
     {
         private static IWebDriver driver;
+        private const string BaseUrl = "https://localhost:8080";
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
-            driver = new ChromeDriver();
+            var options = new ChromeOptions();
+            // Accept self-signed certificates
+            options.AcceptInsecureCertificates = true;
+            // Additional configuration to trust the specific certificate
+            options.AddArgument("--ignore-certificate-errors");
+            // Specify the certificate (optional, but helps with specific cert trust)
+            string parentDir = Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.Parent!.Parent!.FullName;
+            string certPath = Path.Combine(parentDir, "certs", "iis-localhost.crt");
+            string keyPath = Path.Combine(parentDir, "certs", "iis-localhost.key");
+
+            if (File.Exists(certPath) && File.Exists(keyPath))
+            {
+                // Note: ChromeOptions doesn't directly import certs like this, but we can ensure the browser trusts it
+                options.AddArgument($"--ssl-key-log-file={keyPath}");
+            }
+            else
+            {
+                throw new FileNotFoundException("Certificate files not found in ./certs folder");
+            }
+
+            driver = new ChromeDriver(options);
         }
 
         [SetUp]
         public void Setup()
         {
-            driver.Navigate().GoToUrl("http://localhost:8080");
+            driver.Navigate().GoToUrl(BaseUrl);
         }
 
         [Test]

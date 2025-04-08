@@ -33,11 +33,11 @@ jobs:
         timeout 30 bash -c 'while ! nc -z localhost 3000; do sleep 1; done'
     - name: Run Playwright Tests
       env:
-        BASE_URL: 'http://localhost:3000'
+        BASE_URL: 'https://localhost:3000'
       run: cd EcommercePlaywrightTests && npx playwright test
     - name: Run Cucumber API Tests
       env:
-        BASE_URL: 'http://localhost:3000'
+        BASE_URL: 'https://localhost:3000'
       run: cd EcommerceApiTests && npm test
     - name: Stop Node.js Server
       if: always()
