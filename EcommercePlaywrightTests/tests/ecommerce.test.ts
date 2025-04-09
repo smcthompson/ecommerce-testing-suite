@@ -1,6 +1,10 @@
 import { test, expect } from '@playwright/test';
+import { v4 as uuidv4 } from 'uuid';
 
 const BASE_URL = process.env.BASE_URL || 'https://localhost:8080';
+
+// Helper function to create a unique username for each test
+const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 
 test.describe('E-Commerce Site Tests', () => {
   let sessionId: string; // Store session ID for the test run

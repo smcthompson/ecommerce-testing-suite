@@ -1,7 +1,10 @@
 import { Given, When, Then } from '@cucumber/cucumber';
 import request from 'supertest';
 import { expect } from 'chai';
+import { v4 as uuidv4 } from 'uuid';
 import https from 'https';
+// Helper function to create a unique username for each test
+const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 
 // Load the certificates for the HTTPS agent
 const certOptions = {
