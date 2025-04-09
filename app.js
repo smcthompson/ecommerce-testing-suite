@@ -1,5 +1,6 @@
 const express = require('express');
 const compression = require('compression');
+const cors = require('cors');
 const session = require('express-session');
 const { ConnectSessionKnexStore } = require('connect-session-knex');
 const knex = require('knex')(require('./knexfile'));
@@ -50,6 +51,11 @@ app.use(session({
     sameSite: 'lax',
     path: '/',
   },
+}));
+// CORS middleware
+app.use(cors({
+  origin: `${protocol}://${host}:${port}`,
+  credentials: true,
 }));
 // Middleware to set user_id and session_id in req
 app.use((req, res, next) => {
