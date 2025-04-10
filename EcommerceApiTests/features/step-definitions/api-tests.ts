@@ -114,11 +114,12 @@ Then('I should receive a cart cleared message', function () {
 
 When('I request the checkout page', async function () {
   this.response = await request(baseUrl)
-    .get('/checkout')
+    .post('/checkout')
     .set('Cookie', this.cookies)
+    .agent(agent);
 });
 
 Then('I should receive a checkout confirmation', function () {
   expect(this.response.status).to.equal(200);
-  expect(this.response.text).to.include('Checkout Complete');
+  expect(this.response.text).to.equal('Checkout Complete');
 });

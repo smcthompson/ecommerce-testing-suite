@@ -135,6 +135,24 @@ namespace EcommerceSeleniumTests
             Assert.That(driver.PageSource, Does.Contain("Cart cleared successfully"), "Should show cart cleared message");
         }
 
+        [Test]
+        public void TestCheckoutFlow()
+        {
+            PerformLogin();
+            
+            // Add item to cart first
+            wait.Until(d => d.FindElement(By.CssSelector("#product-list li button"))).Click();
+            wait.Until(d => driver.SwitchTo().Alert()).Accept();
+            
+            // Go to cart and checkout
+            wait.Until(d => driver.FindElement(By.LinkText("Go to Cart"))).Click();
+            wait.Until(d => driver.FindElement(By.Id("checkout-button"))).Click();
+
+            // Verify checkout completion
+            wait.Until(d => d.Url.Contains("/checkout"));
+            Assert.That(driver.PageSource, Does.Contain("Checkout Complete"), "Should show checkout completion");
+        }
+
         private string generateUniqueUsername() => $"testUser_{Guid.NewGuid()}";
 
         private void PerformLogin()

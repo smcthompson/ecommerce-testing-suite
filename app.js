@@ -232,7 +232,11 @@ app.post('/cart/clear', async (req, res) => {
   }
 });
 
-app.get('/checkout', (req, res) => res.send('Checkout Complete'));
+// Checkout
+app.post('/checkout', async (req, res) => {
+  res.send('Checkout Complete');
+});
+
 // Static files after routes
 app.use(express.static('public'));
 
