@@ -12,7 +12,7 @@ const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 const certOptions = {
   key: fs.readFileSync('../certs/iis-localhost.key'),
   cert: fs.readFileSync('../certs/iis-localhost.crt'),
-  ca: fs.readFileSync('../certs/iis-localhost.crt'), // Use the same cert as CA for self-signed
+  ca: fs.readFileSync('../certs/iis-localhost.crt'),
 };
 
 // Create a custom HTTPS agent with the certificates
@@ -23,7 +23,7 @@ const baseUrl = process.env.BASE_URL || 'https://localhost:3000';
 Given('the API is running', async function () {
   const res = await request(baseUrl)
     .get('/')
-    .agent(agent); // Use the custom agent with certificates
+    .agent(agent);
   expect(res.status).to.equal(200);
 });
 
@@ -33,9 +33,9 @@ Given('I am logged in', async function () {
     .post('/login')
     .send({ username: generateUniqueUsername(), password: '7357[U53R]' })
     .set('Content-Type', 'application/json')
-    .agent(agent); // Use the custom agent
+    .agent(agent);
   
-  expect(loginRes.status).to.equal(302); // Redirect after login
+  expect(loginRes.status).to.equal(302);
   this.cookies = loginRes.headers['set-cookie'];
 });
 
