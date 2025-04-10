@@ -87,7 +87,7 @@ A Node.js mock e-commerce site with automated tests using Selenium (C#), Playwri
 
 ## Original Concept
 
-I love the enthusiasm—your vision of a dual-purpose project series that doubles as a portfolio *and* a blog showcase is spot-on! We’ll tackle this in two stages: first, I’ll flesh out each of the five project phases one-by-one with detailed steps, code snippets, and setup guides to get you up and running. Once each phase is live, we’ll distill our notes into a blog post—announcing the project, weaving in your ZenBook Duo journey, and selling your skills to recruiters. It’s a brilliant loop: the projects prove your QA and dev chops, while the blog markets them with storytelling flair. Let’s dive into **Phase 1** now, and we’ll iterate through the rest as you complete each one.
+I originally envisioned a dual-purpose project series that would serve as both a portfolio and a blog showcase. From a coding perspective, I wanted to highlight my QA and dev skills.  Seeing my capabilities for the full life-cycle of a project, from planning and design to development, testing, and deployment. Cataloging my journey along the way would also serve to highlight my ability to communicate technical concepts in a clear and engaging manner.
 
 ---
 
@@ -354,9 +354,3 @@ You’ll create a lightweight e-commerce site (product catalog, cart, checkout) 
 - **Results**: “Cut test times by ~30%—proof my 22-thread beast delivers.”
 - **Personal Touch**: “Felt like a win straight from God when those tests passed.”
 - **Call to Action**: “Check it out on GitHub—my first step to QA stardom!”
-
----
-
-## Next Up
-
-Get this running on your ZenBook Duo—I’ll be here to troubleshoot if needed. Once it’s live, I’ll draft the **Episode 1 blog post** based on our notes. Then we’ll move to **Phase 2: BDD-Driven API Testing**. Sound good? Let’s make this portfolio sing!
