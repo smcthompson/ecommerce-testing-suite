@@ -124,6 +124,18 @@ app.post('/login', async (req, res) => {
   }
 });
 
+// Logout endpoint
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Error during logout:', err);
+      return res.status(500).json({ error: 'Logout failed' });
+    }
+    console.log('/logout', 'User logged out');
+    res.redirect('/');
+  });
+});
+
 // Product list
 app.get('/products', async (req, res) => {
     const products = await knex('products').select('*');

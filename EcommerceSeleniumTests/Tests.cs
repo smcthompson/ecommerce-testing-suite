@@ -55,6 +55,18 @@ namespace EcommerceSeleniumTests
             Assert.That(driver.PageSource, Does.Contain("products"), "Should redirect to products page after login");
         }
 
+        [Test]
+        public void TestLogoutFlow()
+        {
+            // Login first
+            PerformLogin();
+
+            // Perform logout
+            wait.Until(d => driver.FindElement(By.CssSelector("form[action='/logout'] button"))).Click();
+
+            // Wait for redirect and verify login page
+            wait.Until(d => d.PageSource.Contains("login"));
+            Assert.That(driver.PageSource, Does.Contain("login"), "Should redirect to login page after logout");
         }
 
         [Test]
