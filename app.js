@@ -33,7 +33,6 @@ const store = new ConnectSessionKnexStore({
 store.on('connect', () => {
 });
 store.on('error', (err) => {
-  console.error("on('error')", err);
 });
 
 // Initialize Express app
@@ -116,7 +115,6 @@ app.post('/login', async (req, res) => {
     // Explicitly save the session before redirecting
     req.session.save((err) => {
       if (err) {
-        console.error('Error saving session:', err);
         return res.status(500).json({ error: 'Failed to save session' });
       }
       res.redirect('/');
@@ -130,7 +128,6 @@ app.post('/login', async (req, res) => {
 app.post('/logout', (req, res) => {
   req.session.destroy((err) => {
     if (err) {
-      console.error('Error during logout:', err);
       return res.status(500).json({ error: 'Logout failed' });
     }
     res.redirect('/');
@@ -213,7 +210,6 @@ app.post('/cart/add', async (req, res) => {
     }
     res.status(200).json({ message: 'Item added to cart' });
   } catch (err) {
-    console.error('Error adding to cart:', err);
     res.status(500).json({ error: 'Failed to add item to cart' });
   }
 });
