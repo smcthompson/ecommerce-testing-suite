@@ -30,6 +30,8 @@ const store = new ConnectSessionKnexStore({
   },
 });
 // Add logging for session store operations
+store.on('connect', () => {
+});
 store.on('error', (err) => {
   console.error("on('error')", err);
 });
