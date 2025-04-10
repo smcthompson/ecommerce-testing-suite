@@ -71,21 +71,23 @@ app.use(compression());
 });
 
   try {
-    const existingItem = await knex('cart')
-      .where({ session_id: req.session_id, product_id: req.body.product_id })
+    // Check if the user exists
+    let user = await knex('users')
+      .where({ username, password })
       .first();
-    if (existingItem) {
-      await knex('cart')
-        .where({ session_id: req.session_id, product_id: req.body.product_id })
-        .increment('quantity', req.body.quantity);
-    } else {
-      await knex('cart').insert({
-        session_id: req.session_id,
-        product_id: req.body.product_id,
-        quantity: req.body.quantity,
       });
     }
-    res.status(200).json({ message: 'Item added to cart' });
+
+    req.session.userId = user.id;
+
+    // Explicitly save the session before redirecting
+    req.session.save((err) => {
+      if (err) {
+        console.error('Error saving session:', err);
+        return res.status(500).json({ error: 'Failed to save session' });
+      }
+      res.redirect('/');
+    });
   } catch (err) {
     res.status(500).json({ error: 'Failed to add item to cart' });
 // Product list
@@ -99,8 +101,8 @@ app.get('/products', async (req, res) => {
 app.get('/cart', async (req, res) => {
   try {
     const cartItems = await knex('cart')
-      .join('products', 'cart.product_id', 'products.id')
-      .where('cart.session_id', req.session_id)
+      .leftJoin('products', 'cart.product_id', 'products.id')
+      .where('cart.user_id', req.user_id)
       .select('products.id', 'products.name', 'products.price', 'cart.quantity');
     const cartHtml = cartItems.length > 0
       ? cartItems.map(item => `<li>${item.name} - $${item.price} (Qty: ${item.quantity})</li>`).join('')
@@ -113,7 +115,6 @@ app.get('/cart', async (req, res) => {
         <h1>Cart Page</h1>
         <ul id="cart-items">${cartHtml}</ul>
         <button id="checkout-button">Proceed to Checkout</button>
-        <a href="/?session_id=${encodeURIComponent(req.session_id)}">Back to Products</a>
       </body>
       </html>
     `);
@@ -127,8 +128,8 @@ app.post('/cart/add', async (req, res) => {
 // Clear cart
 app.post('/cart/clear', async (req, res) => {
   try {
-    await knex('cart').where('session_id', req.session_id).del();
-    res.status(200).json({ message: 'Cart cleared' });
+    const deletedRows = await knex('cart').where('user_id', req.user_id).del();
+    res.status(200).json({ message: 'Cart cleared successfully' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to clear cart' });
   }

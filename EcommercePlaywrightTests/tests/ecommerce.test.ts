@@ -7,10 +7,8 @@ const BASE_URL = process.env.BASE_URL || 'https://localhost:8080';
 const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 
 test.describe('E-Commerce Site Tests', () => {
-  let sessionId: string; // Store session ID for the test run
 
   test.beforeEach(async ({ page }) => {
-    sessionId = `test-session-${Date.now()}`; // Generate once per test
     const response = await fetch(`${BASE_URL}/cart/clear`, {
       method: 'POST',
       headers: { 'X-Session-ID': sessionId },
@@ -21,6 +19,15 @@ test.describe('E-Commerce Site Tests', () => {
     }
     await page.setExtraHTTPHeaders({ 'X-Session-ID': sessionId });
     await page.goto(`${BASE_URL}?session_id=${encodeURIComponent(sessionId)}`);
+  let username; // Store the unique username for each test
+    // Generate a unique username for this test
+    username = generateUniqueUsername();
+
+    // Log in with the unique user
+    await page.goto(BASE_URL);
+    await page.fill('input[name="username"]', username);
+    await page.fill('input[name="password"]', '7357[U53R]');
+    await page.click('button[type="submit"]');
     await page.waitForSelector('#product-list li');
   });
 
@@ -43,7 +50,6 @@ test.describe('E-Commerce Site Tests', () => {
     await page.waitForSelector('li:has-text("Laptop - $999") button', { state: 'visible' });
     await page.click('li:has-text("Laptop - $999") button');
     await cartAddResponse;
-    await page.goto(`${BASE_URL}/cart?session_id=${encodeURIComponent(sessionId)}`);
     await page.waitForURL('**/cart**');
     await expect(page.locator('#cart-items li')).toContainText('Laptop - $999 (Qty: 1)');
     await expect(page.locator('#cart-items li')).toHaveCount(1);

@@ -27,8 +27,16 @@ Given('the API is running', async function () {
   expect(res.status).to.equal(200);
 });
 
-Given('I set a session ID', function () {
-  this.sessionId = `test-session-${Date.now()}`; // Generate a unique session ID
+Given('I am logged in', async function () {
+  // Store cookies for authenticated session
+  const loginRes = await request(baseUrl)
+    .post('/login')
+    .send({ username: generateUniqueUsername(), password: '7357[U53R]' })
+    .set('Content-Type', 'application/json')
+    .agent(agent); // Use the custom agent
+  
+  expect(loginRes.status).to.equal(302); // Redirect after login
+  this.cookies = loginRes.headers['set-cookie'];
 });
 
 When('I request the product list', async function () {
@@ -47,7 +55,7 @@ Then('the list should contain {int} products', function (count: number) {
 When('I request the cart page', async function () {
   this.response = await request(baseUrl)
     .get('/cart')
-    .set('X-Session-ID', this.sessionId);
+    .set('Cookie', this.cookies)
 });
 
 Then('I should receive the cart page', function () {
@@ -62,9 +70,9 @@ Then('the cart page should contain no items', function () {
 When('I add a product to the cart', async function () {
   this.response = await request(baseUrl)
     .post('/cart/add')
-    .set('X-Session-ID', this.sessionId)
     .send({ product_id: 1, quantity: 1 }) // Add "Laptop" (id: 3)
     .set('Content-Type', 'application/json');
+    .set('Cookie', this.cookies)
 });
 
 Then('I should receive a success message', function () {
@@ -79,9 +87,9 @@ Then('the cart page should contain the added item', function () {
 When('I clear the cart', async function () {
   this.response = await request(baseUrl)
     .post('/cart/clear')
-    .set('X-Session-ID', this.sessionId);
   expect(this.response.status).to.equal(200);
   expect(this.response.body.message).to.equal('Cart cleared');
+    .set('Cookie', this.cookies)
 });
 
 Then('I should receive a cart cleared message', function () {
@@ -92,7 +100,7 @@ Then('I should receive a cart cleared message', function () {
 When('I request the checkout page', async function () {
   this.response = await request(baseUrl)
     .get('/checkout')
-    .set('X-Session-ID', this.sessionId);
+    .set('Cookie', this.cookies)
 });
 
 Then('I should receive a checkout confirmation', function () {
