@@ -3,6 +3,8 @@ import request from 'supertest';
 import { expect } from 'chai';
 import { v4 as uuidv4 } from 'uuid';
 import https from 'https';
+import fs from 'fs';
+
 // Helper function to create a unique username for each test
 const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 

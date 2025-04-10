@@ -6,7 +6,10 @@ const { ConnectSessionKnexStore } = require('connect-session-knex');
 const knex = require('knex')(require('./knexfile'));
 const app = express();
 const port = 3000;
+const path = require('path');
 const https = require('https');
+const fs = require('fs');
+
 
 app.use(compression());
 app.use(express.static('public'));
