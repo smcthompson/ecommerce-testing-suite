@@ -87,6 +87,9 @@ namespace EcommerceSeleniumTests
         {
             driver.FindElement(By.LinkText("Go to Cart")).Click();
             Assert.That(driver.PageSource, Does.Contain("Cart Page"), "Should navigate to cart page");
+
+        private string generateUniqueUsername() => $"testUser_{Guid.NewGuid()}";
+
         private void PerformLogin()
         {
             // Create a new user with a randomly generated guid as the username
