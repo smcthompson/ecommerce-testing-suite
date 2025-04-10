@@ -92,5 +92,11 @@
   "bugs": {
     "url": "https://github.com/smcthompson/ecommerce-testing-suite/issues"
   },
-  "homepage": "https://github.com/smcthompson/ecommerce-testing-suite#readme"
+  "homepage": "https://github.com/smcthompson/ecommerce-testing-suite#readme",
+  "devDependencies": {
+    "@types/compression": "^1.7.5",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.1",
+    "@types/express-session": "^1.18.1"
+  }
 }
