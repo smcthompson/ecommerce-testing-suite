@@ -85,12 +85,28 @@ app.get('/', async (req, res) => {
   );
 });
 
+// Login endpoint with server-side redirect
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+
+  // Validate form data
+  if (!username || !password) {
+    return res.status(400).json({ error: 'Username and password are required' });
+  }
+
   try {
     // Check if the user exists
     let user = await knex('users')
       .where({ username, password })
       .first();
+
+    // If user doesn't exist, create a new one
+    if (!user) {
+      const [newUserId] = await knex('users').insert({
+        username,
+        password,
       });
+      user = { id: newUserId, username, password };
     }
 
     req.session.userId = user.id;
@@ -104,7 +120,10 @@ app.get('/', async (req, res) => {
       res.redirect('/');
     });
   } catch (err) {
-    res.status(500).json({ error: 'Failed to add item to cart' });
+    res.status(500).json({ error: 'Login failed' });
+  }
+});
+
 // Product list
 app.get('/products', async (req, res) => {
     const products = await knex('products').select('*');

@@ -7,19 +7,9 @@ const BASE_URL = process.env.BASE_URL || 'https://localhost:8080';
 const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 
 test.describe('E-Commerce Site Tests', () => {
+  let username;
 
-  test.beforeEach(async ({ page }) => {
-    const response = await fetch(`${BASE_URL}/cart/clear`, {
-      method: 'POST',
-      headers: { 'X-Session-ID': sessionId },
-    });
-    const result = await response.json();
-    if (response.status !== 200) {
-      throw new Error(`Failed to clear cart: ${result.error || response.statusText}`);
-    }
-    await page.setExtraHTTPHeaders({ 'X-Session-ID': sessionId });
-    await page.goto(`${BASE_URL}?session_id=${encodeURIComponent(sessionId)}`);
-  let username; // Store the unique username for each test
+  test.beforeEach(async ({ page, request }) => {
     // Generate a unique username for this test
     username = generateUniqueUsername();
 
