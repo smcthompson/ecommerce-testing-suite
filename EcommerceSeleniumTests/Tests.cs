@@ -18,6 +18,8 @@ namespace EcommerceSeleniumTests
             options.AcceptInsecureCertificates = true;
             // Additional configuration to trust the specific certificate
             options.AddArgument("--ignore-certificate-errors");
+            // Run tests headless
+            options.AddArgument("--headless");
             // Specify the certificate (optional, but helps with specific cert trust)
             string parentDir = Directory.GetParent(Directory.GetCurrentDirectory())!.Parent!.Parent!.Parent!.FullName;
             string certPath = Path.Combine(parentDir, "certs", "iis-localhost.crt");
