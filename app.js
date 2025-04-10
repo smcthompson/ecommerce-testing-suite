@@ -152,12 +152,17 @@ app.get('/products', async (req, res) => {
 
 // View cart
 app.get('/cart', async (req, res) => {
+  if (!req.user_id) {
+    console.log('/cart', 'User not logged in, cannot view cart');
+    return res.status(401).send('Unauthorized: Please log in');
+  }
+  console.log('/cart - req.user_id', req.user_id);
   try {
     const cartItems = await knex('cart')
       .leftJoin('products', 'cart.product_id', 'products.id')
       .where('cart.user_id', req.user_id)
       .select('products.id', 'products.name', 'products.price', 'cart.quantity');
-    const cartHtml = cartItems.length > 0
+    const cartHtml = cartItems.length > 0 && cartItems[0].name
       ? cartItems.map(item => `<li>${item.name} - $${item.price} (Qty: ${item.quantity})</li>`).join('')
       : '<li>No items in cart</li>';
     res.send(`
@@ -167,7 +172,16 @@ app.get('/cart', async (req, res) => {
       <body>
         <h1>Cart Page</h1>
         <ul id="cart-items">${cartHtml}</ul>
-        <button id="checkout-button">Proceed to Checkout</button>
+        <form id="checkout-form" action="/checkout" method="POST">
+          <button id="checkout-button">Proceed to Checkout</button>
+        </form>
+        <form id="clear-cart-form" action="/cart/clear" method="POST">
+          <button id="clear-cart-button">Clear Cart</button>
+        </form>
+        <a href="/">Back to Products</a>
+        <form action="/logout" method="POST">
+          <button type="submit">Logout</button>
+        </form>
       </body>
       </html>
     `);

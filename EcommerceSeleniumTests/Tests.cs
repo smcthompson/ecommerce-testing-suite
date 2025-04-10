@@ -86,7 +86,23 @@ namespace EcommerceSeleniumTests
         public void TestCartNavigation()
         {
             driver.FindElement(By.LinkText("Go to Cart")).Click();
+        [Test]
+        public void TestCartNavigationAndContents()
+        {
+            // Perform login
+            PerformLogin();
+
+            // Navigate to cart
+            wait.Until(d => driver.FindElement(By.LinkText("Go to Cart"))).Click();
+            
+            // Verify cart page
+            wait.Until(d => d.Url.Contains("/cart"));
             Assert.That(driver.PageSource, Does.Contain("Cart Page"), "Should navigate to cart page");
+
+            // Verify empty cart message
+            var cartItems = driver.FindElements(By.CssSelector("#cart-items li"));
+            Assert.That(cartItems[0].Text, Does.Contain("No items in cart"), "Cart should be empty initially");
+        }
 
         private string generateUniqueUsername() => $"testUser_{Guid.NewGuid()}";
 

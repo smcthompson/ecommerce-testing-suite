@@ -85,9 +85,10 @@ Then('the cart page should contain no items', function () {
 When('I add a product to the cart', async function () {
   this.response = await request(baseUrl)
     .post('/cart/add')
-    .send({ product_id: 1, quantity: 1 }) // Add "Laptop" (id: 3)
-    .set('Content-Type', 'application/json');
     .set('Cookie', this.cookies)
+    .send({ product_id: 1, quantity: 1 })
+    .set('Content-Type', 'application/json')
+    .agent(agent);
 });
 
 Then('I should receive a success message', function () {

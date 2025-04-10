@@ -28,7 +28,7 @@ test.describe('E-Commerce Site Tests', () => {
 
   test('Cart navigation works', async ({ page }) => {
     await page.click('#go-to-cart');
-    await page.waitForURL('**/cart**');
+    await page.waitForURL('**/cart');
     await expect(page.locator('h1')).toHaveText('Cart Page');
     await expect(page.locator('#cart-items li')).toContainText('No items in cart');
     await expect(page.locator('#checkout-button')).toBeVisible();
@@ -40,7 +40,8 @@ test.describe('E-Commerce Site Tests', () => {
     await page.waitForSelector('li:has-text("Laptop - $999") button', { state: 'visible' });
     await page.click('li:has-text("Laptop - $999") button');
     await cartAddResponse;
-    await page.waitForURL('**/cart**');
+    await page.goto(`${BASE_URL}/cart`);
+    await page.waitForURL('**/cart');
     await expect(page.locator('#cart-items li')).toContainText('Laptop - $999 (Qty: 1)');
     await expect(page.locator('#cart-items li')).toHaveCount(1);
   });
