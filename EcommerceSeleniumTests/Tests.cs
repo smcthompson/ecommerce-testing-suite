@@ -41,6 +41,8 @@ namespace EcommerceSeleniumTests
         public void Setup()
         {
             driver.Navigate().GoToUrl(BaseUrl);
+        }
+
         [Test]
         public void TestLoginFlow()
         {
