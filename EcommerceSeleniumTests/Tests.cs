@@ -1,11 +1,13 @@
 ﻿using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Support.UI;
 
 namespace EcommerceSeleniumTests
 {
     public class Tests
     {
         private static IWebDriver driver;
+        private WebDriverWait wait;
         private const string BaseUrl = "https://localhost:8080";
 
         [OneTimeSetUp]
@@ -32,6 +34,7 @@ namespace EcommerceSeleniumTests
             }
 
             driver = new ChromeDriver(options);
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
         }
 
         [SetUp]
