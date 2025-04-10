@@ -41,6 +41,8 @@ namespace EcommerceSeleniumTests
         public void Setup()
         {
             driver.Navigate().GoToUrl(BaseUrl);
+            // Clear session cookies before each test
+            driver.Manage().Cookies.DeleteAllCookies();
         }
 
         [Test]
@@ -167,7 +169,8 @@ namespace EcommerceSeleniumTests
         [TearDown]
         public void TearDown()
         {
-            // Optional: Clear cookies or reset state if needed
+            // Clear cookies after each test
+            driver.Manage().Cookies.DeleteAllCookies();
         }
 
         [OneTimeTearDown]
