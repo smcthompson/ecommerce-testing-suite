@@ -192,6 +192,33 @@ app.get('/cart', async (req, res) => {
 
 // Add to cart
 app.post('/cart/add', async (req, res) => {
+  if (!req.user_id) {
+    console.log('/cart/add', 'User not logged in, cannot add to cart');
+    return res.status(401).json({ error: 'Unauthorized: Please log in' });
+  }
+  console.log('/cart/add - Adding to cart', { user_id: req.user_id, product_id: req.body.product_id, quantity: req.body.quantity });
+  try {
+    const existingItem = await knex('cart')
+      .where({ user_id: req.user_id, product_id: req.body.product_id })
+      .first();
+    if (existingItem) {
+      await knex('cart')
+        .where({ user_id: req.user_id, product_id: req.body.product_id })
+        .increment('quantity', req.body.quantity);
+    } else {
+      await knex('cart').insert({
+        user_id: req.user_id,
+        product_id: req.body.product_id,
+        quantity: req.body.quantity,
+      });
+    }
+    res.status(200).json({ message: 'Item added to cart' });
+  } catch (err) {
+    console.error('Error adding to cart:', err);
+    res.status(500).json({ error: 'Failed to add item to cart' });
+  }
+});
+
 // Clear cart
 app.post('/cart/clear', async (req, res) => {
   try {

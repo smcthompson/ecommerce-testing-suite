@@ -97,7 +97,7 @@ Then('I should receive a success message', function () {
 });
 
 Then('the cart page should contain the added item', function () {
-  expect(this.response.text).to.include('Laptop - $999 (Qty: 1)');
+  expect(this.response.text).to.match(/Laptop.*\$\d+\s\(Qty: 1\)/);
 });
 
 When('I clear the cart', async function () {

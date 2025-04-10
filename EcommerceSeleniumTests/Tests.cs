@@ -83,9 +83,21 @@ namespace EcommerceSeleniumTests
         }
 
         [Test]
-        public void TestCartNavigation()
+        public void TestAddToCart()
         {
-            driver.FindElement(By.LinkText("Go to Cart")).Click();
+            // Perform login
+            PerformLogin();
+
+            // Add item to cart
+            wait.Until(d => d.FindElement(By.CssSelector("#product-list li button"))).Click();
+
+           // Verify alert message for item added to cart
+            IAlert alert = wait.Until(d => driver.SwitchTo().Alert());
+            Assert.That(alert, Is.Not.Null);
+            Assert.That(alert.Text, Does.Contain("Item added to cart"));
+            alert.Accept();
+        }
+
         [Test]
         public void TestCartNavigationAndContents()
         {
