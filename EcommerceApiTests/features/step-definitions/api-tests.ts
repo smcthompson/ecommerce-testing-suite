@@ -103,14 +103,13 @@ Then('the cart page should contain the added item', function () {
 When('I clear the cart', async function () {
   this.response = await request(baseUrl)
     .post('/cart/clear')
-  expect(this.response.status).to.equal(200);
-  expect(this.response.body.message).to.equal('Cart cleared');
     .set('Cookie', this.cookies)
+    .agent(agent);
 });
 
 Then('I should receive a cart cleared message', function () {
   expect(this.response.status).to.equal(200);
-  expect(this.response.body.message).to.equal('Cart cleared');
+  expect(this.response.body.message).to.equal('Cart cleared successfully');
 });
 
 When('I request the checkout page', async function () {

@@ -21,6 +21,14 @@ test.describe('E-Commerce Site Tests', () => {
     await page.waitForSelector('#product-list li');
   });
 
+  // Clear cart
+  test.afterEach(async ({ page }) => {
+    const clearCartResponse = await page.request.post(`${BASE_URL}/cart/clear`);
+    expect(clearCartResponse.status()).toBe(200);
+    const responseBody = await clearCartResponse.json();
+    expect(responseBody.message).toBe('Cart cleared successfully');
+  });
+
   test('Product list loads', async ({ page }) => {
     const products = await page.$$('li');
     expect(products.length).toBeGreaterThan(0);

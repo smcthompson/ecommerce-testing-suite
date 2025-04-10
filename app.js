@@ -221,6 +221,9 @@ app.post('/cart/add', async (req, res) => {
 
 // Clear cart
 app.post('/cart/clear', async (req, res) => {
+  if (!req.user_id) {
+    return res.status(401).json({ error: 'Unauthorized: Please log in' });
+  }
   try {
     const deletedRows = await knex('cart').where('user_id', req.user_id).del();
     res.status(200).json({ message: 'Cart cleared successfully' });

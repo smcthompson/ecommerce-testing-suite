@@ -116,6 +116,25 @@ namespace EcommerceSeleniumTests
             Assert.That(cartItems[0].Text, Does.Contain("No items in cart"), "Cart should be empty initially");
         }
 
+        [Test]
+        public void TestClearCart()
+        {
+            // Perform login
+            PerformLogin();
+            
+            // Add item to cart first
+            wait.Until(d => d.FindElement(By.CssSelector("#product-list li button"))).Click();
+            wait.Until(d => driver.SwitchTo().Alert()).Accept();
+            
+            // Go to cart and clear
+            wait.Until(d => driver.FindElement(By.LinkText("Go to Cart"))).Click();
+            wait.Until(d => driver.FindElement(By.Id("clear-cart-button"))).Click();
+
+            // Verify cart is empty
+            wait.Until(d => d.Url.Contains("/cart/clear"));
+            Assert.That(driver.PageSource, Does.Contain("Cart cleared successfully"), "Should show cart cleared message");
+        }
+
         private string generateUniqueUsername() => $"testUser_{Guid.NewGuid()}";
 
         private void PerformLogin()
