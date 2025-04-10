@@ -40,7 +40,12 @@ Given('I am logged in', async function () {
 });
 
 When('I request the product list', async function () {
-  this.response = await request(baseUrl).get('/products');
+  this.response = await request(baseUrl)
+    .get('/products')
+    .set('Cookie', this.cookies)
+    .agent(agent);
+});
+
 When('I request the product list without logging in', async function () {
   this.response = await request(baseUrl)
     .get('/products')
@@ -65,6 +70,7 @@ When('I request the cart page', async function () {
   this.response = await request(baseUrl)
     .get('/cart')
     .set('Cookie', this.cookies)
+    .agent(agent);
 });
 
 Then('I should receive the cart page', function () {

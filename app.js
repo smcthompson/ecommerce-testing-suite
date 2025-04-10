@@ -138,8 +138,15 @@ app.post('/logout', (req, res) => {
 
 // Product list
 app.get('/products', async (req, res) => {
+  if (!req.session.userId) {
+    return res.redirect('/');
+  }
+
+  try {
     const products = await knex('products').select('*');
     res.json(products);
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch products' });
   }
 });
 
