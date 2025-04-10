@@ -131,7 +131,6 @@ app.post('/logout', (req, res) => {
       console.error('Error during logout:', err);
       return res.status(500).json({ error: 'Logout failed' });
     }
-    console.log('/logout', 'User logged out');
     res.redirect('/');
   });
 });
@@ -153,10 +152,9 @@ app.get('/products', async (req, res) => {
 // View cart
 app.get('/cart', async (req, res) => {
   if (!req.user_id) {
-    console.log('/cart', 'User not logged in, cannot view cart');
     return res.status(401).send('Unauthorized: Please log in');
   }
-  console.log('/cart - req.user_id', req.user_id);
+
   try {
     const cartItems = await knex('cart')
       .leftJoin('products', 'cart.product_id', 'products.id')
@@ -193,10 +191,9 @@ app.get('/cart', async (req, res) => {
 // Add to cart
 app.post('/cart/add', async (req, res) => {
   if (!req.user_id) {
-    console.log('/cart/add', 'User not logged in, cannot add to cart');
     return res.status(401).json({ error: 'Unauthorized: Please log in' });
   }
-  console.log('/cart/add - Adding to cart', { user_id: req.user_id, product_id: req.body.product_id, quantity: req.body.quantity });
+
   try {
     const existingItem = await knex('cart')
       .where({ user_id: req.user_id, product_id: req.body.product_id })
