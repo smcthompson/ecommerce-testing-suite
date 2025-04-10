@@ -68,6 +68,21 @@ app.use((req, res, next) => {
 // Compression middleware
 app.use(compression());
 
+// Root route
+app.get('/', async (req, res) => {
+  // Check if the user is not logged in
+  if (!req.session.userId) {
+    return res.sendFile(path.join(__dirname, 'public', 'login.html'));
+  }
+
+  // If user is logged in, serve the product list page
+  res.sendFile(path.join(__dirname, 'public', 'products.html'),
+    (err) => {
+      if (err) {
+        res.status(500).send('Error loading product list page');
+      }
+    }
+  );
 });
 
   try {

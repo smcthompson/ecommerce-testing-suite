@@ -41,6 +41,15 @@ Given('I am logged in', async function () {
 
 When('I request the product list', async function () {
   this.response = await request(baseUrl).get('/products');
+When('I request the product list without logging in', async function () {
+  this.response = await request(baseUrl)
+    .get('/products')
+    .agent(agent);
+});
+
+Then('I should be redirected to login', function () {
+  expect(this.response.status).to.equal(302);
+  expect(this.response.headers.location).to.equal('/');
 });
 
 Then('I should receive a list of products', function () {
