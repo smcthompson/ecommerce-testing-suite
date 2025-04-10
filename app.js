@@ -4,16 +4,11 @@ const cors = require('cors');
 const session = require('express-session');
 const { ConnectSessionKnexStore } = require('connect-session-knex');
 const knex = require('knex')(require('./knexfile'));
-const app = express();
-const port = 3000;
 const path = require('path');
 const https = require('https');
 const fs = require('fs');
 
 
-app.use(compression());
-app.use(express.static('public'));
-app.use(express.json()); // For parsing JSON request bodies
 // Configre HTTP server
 const protocol = process.env.PROTOCOL || 'https';
 const host = process.env.HOST || 'localhost';
@@ -41,6 +36,8 @@ store.on('error', (err) => {
 
 // Initialize Express app
 const app = express();
+// JSON middleware
+app.use(express.json());
 // Session middleware
 app.use(session({
   secret: 'your-secret-key',
@@ -66,6 +63,8 @@ app.use((req, res, next) => {
   req.session_id = req.session.id;
   next();
 });
+// Compression middleware
+app.use(compression());
 
 // Get products
 app.get('/products', async (req, res) => {
@@ -134,6 +133,8 @@ app.post('/cart/clear', async (req, res) => {
 });
 
 app.get('/checkout', (req, res) => res.send('Checkout Complete'));
+// Static files after routes
+app.use(express.static('public'));
 
 https.createServer(httpsOptions, app).listen(port, () => {
 });
