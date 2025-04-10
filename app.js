@@ -38,6 +38,8 @@ store.on('error', (err) => {
 const app = express();
 // JSON middleware
 app.use(express.json());
+// Parse URL-encoded bodies (for form submissions)
+app.use(express.urlencoded({ extended: true }));
 // Session middleware
 app.use(session({
   secret: 'your-secret-key',
