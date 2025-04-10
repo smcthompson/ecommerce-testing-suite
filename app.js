@@ -70,8 +70,6 @@ app.use(compression());
 
 });
 
-// Add item to cart
-app.post('/cart/add', async (req, res) => {
   try {
     const existingItem = await knex('cart')
       .where({ session_id: req.session_id, product_id: req.body.product_id })
@@ -124,6 +122,8 @@ app.get('/cart', async (req, res) => {
   }
 });
 
+// Add to cart
+app.post('/cart/add', async (req, res) => {
 // Clear cart
 app.post('/cart/clear', async (req, res) => {
   try {
