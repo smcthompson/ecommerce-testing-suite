@@ -68,10 +68,6 @@ app.use((req, res, next) => {
 // Compression middleware
 app.use(compression());
 
-// Get products
-app.get('/products', async (req, res) => {
-  const products = await knex('products').select('*');
-  res.json(products);
 });
 
 // Add item to cart
@@ -94,6 +90,10 @@ app.post('/cart/add', async (req, res) => {
     res.status(200).json({ message: 'Item added to cart' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to add item to cart' });
+// Product list
+app.get('/products', async (req, res) => {
+    const products = await knex('products').select('*');
+    res.json(products);
   }
 });
 
