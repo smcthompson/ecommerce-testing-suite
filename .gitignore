@@ -139,3 +139,4 @@ EcommerceSeleniumTests/obj/
 *.vs/
 *.user
 *.suo
+certs/
