@@ -3,10 +3,13 @@ const compression = require('compression');
 const cors = require('cors');
 const session = require('express-session');
 const { ConnectSessionKnexStore } = require('connect-session-knex');
+const cookieParser = require('cookie-parser');
 const knex = require('knex')(require('./knexfile'));
 const path = require('path');
 const https = require('https');
 const fs = require('fs');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 
 // Configre HTTP server
