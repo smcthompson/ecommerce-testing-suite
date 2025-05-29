@@ -1,8 +1,6 @@
 const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
-const session = require('express-session');
-const { ConnectSessionKnexStore } = require('connect-session-knex');
 const cookieParser = require('cookie-parser');
 const knex = require('knex')(require('./knexfile'));
 const path = require('path');
@@ -22,21 +20,6 @@ const httpsOptions = {
   cert: fs.readFileSync('certs/iis-localhost.crt'),
 };
 
-// Configure session store
-const store = new ConnectSessionKnexStore({
-  knex,
-  tablename: 'sessions',
-  createTable: true,
-  sidfieldname: 'sid',
-  logErrors: (err) => {
-    console.error('Session store error:', err);
-  },
-});
-// Add logging for session store operations
-store.on('connect', () => {
-});
-store.on('error', (err) => {
-});
 
 // Initialize Express app
 const app = express();
@@ -44,31 +27,11 @@ const app = express();
 app.use(express.json());
 // Parse URL-encoded bodies (for form submissions)
 app.use(express.urlencoded({ extended: true }));
-// Session middleware
-app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  store: store,
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
-    secure: true,
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-  },
-}));
 // CORS middleware
 app.use(cors({
   origin: `${protocol}://${host}:${port}`,
   credentials: true,
 }));
-// Middleware to set user_id and session_id in req
-app.use((req, res, next) => {
-  req.user_id = req.session.userId || null;
-  req.session_id = req.session.id;
-  next();
-});
 // Compression middleware
 app.use(compression());
 
@@ -113,15 +76,7 @@ app.post('/login', async (req, res) => {
       user = { id: newUserId, username, password };
     }
 
-    req.session.userId = user.id;
 
-    // Explicitly save the session before redirecting
-    req.session.save((err) => {
-      if (err) {
-        return res.status(500).json({ error: 'Failed to save session' });
-      }
-      res.redirect('/');
-    });
   } catch (err) {
     res.status(500).json({ error: 'Login failed' });
   }
@@ -129,14 +84,6 @@ app.post('/login', async (req, res) => {
 
 // Logout endpoint
 app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Logout failed' });
-    }
-    res.redirect('/');
-  });
-});
-
 // Product list
 app.get('/products', async (req, res) => {
   if (!req.session.userId) {
