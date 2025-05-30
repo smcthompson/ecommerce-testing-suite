@@ -63,15 +63,12 @@ app.use(cors({
 app.use(compression());
 
 // Root route
-  // If user is logged in, serve the product list page
-  res.sendFile(path.join(__dirname, 'public', 'products.html'),
-    (err) => {
-      if (err) {
-        res.status(500).send('Error loading product list page');
-      }
 app.get('/', authenticateJWT, async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'products.html'), (err) => {
+    if (err) {
+      res.status(500).json({ error: 'Failed to load product list page' });
     }
-  );
+  });
 });
 
 // Login endpoint with server-side redirect
@@ -116,9 +113,6 @@ app.post('/login', async (req, res) => {
 
 // Logout endpoint
 app.post('/logout', (req, res) => {
-// Product list
-app.get('/products', async (req, res) => {
-  if (!req.session.userId) {
   res.clearCookie('jwt');
   if (req.accepts('html')) {
     return res.redirect('/');
@@ -126,6 +120,8 @@ app.get('/products', async (req, res) => {
   return res.json({ message: 'Logged out successfully' });
 });
 
+// Product list
+app.get('/products', authenticateJWT, async (req, res) => {
   try {
     const products = await knex('products').select('*');
     res.json(products);
