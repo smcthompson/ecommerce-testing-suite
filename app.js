@@ -8,6 +8,7 @@ const https = require('https');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret-key';
 
 
 // Configre HTTP server
@@ -20,6 +21,31 @@ const httpsOptions = {
   cert: fs.readFileSync('certs/iis-localhost.crt'),
 };
 
+// Middleware to verify JWT
+const authenticateJWT = (req, res, next) => {
+  let token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    token = req.cookies?.jwt;
+  }
+  if (!token) {
+    if (req.accepts('html')) {
+      return res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    }
+    return res.status(401).json({ error: 'Unauthorized: No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user_id = decoded.userId;
+    next();
+  } catch (err) {
+    console.error('JWT verification error:', err);
+    if (req.accepts('html')) {
+      return res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    }
+    return res.status(403).json({ error: 'Unauthorized: Invalid token' });
+  }
+};
 
 // Initialize Express app
 const app = express();
@@ -28,6 +54,7 @@ app.use(express.json());
 // Parse URL-encoded bodies (for form submissions)
 app.use(express.urlencoded({ extended: true }));
 // CORS middleware
+app.use(cookieParser());
 app.use(cors({
   origin: `${protocol}://${host}:${port}`,
   credentials: true,
@@ -36,18 +63,13 @@ app.use(cors({
 app.use(compression());
 
 // Root route
-app.get('/', async (req, res) => {
-  // Check if the user is not logged in
-  if (!req.session.userId) {
-    return res.sendFile(path.join(__dirname, 'public', 'login.html'));
-  }
-
   // If user is logged in, serve the product list page
   res.sendFile(path.join(__dirname, 'public', 'products.html'),
     (err) => {
       if (err) {
         res.status(500).send('Error loading product list page');
       }
+app.get('/', authenticateJWT, async (req, res) => {
     }
   );
 });
@@ -76,7 +98,17 @@ app.post('/login', async (req, res) => {
       user = { id: newUserId, username, password };
     }
 
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1d' });
 
+    if (req.accepts('html')) {
+      res.cookie('jwt', token, {
+        secure: true,
+        sameSite: 'strict',
+      });
+      return res.redirect('/');
+    } else {
+      return res.json({ token });
+    }
   } catch (err) {
     res.status(500).json({ error: 'Login failed' });
   }
@@ -87,8 +119,12 @@ app.post('/logout', (req, res) => {
 // Product list
 app.get('/products', async (req, res) => {
   if (!req.session.userId) {
+  res.clearCookie('jwt');
+  if (req.accepts('html')) {
     return res.redirect('/');
   }
+  return res.json({ message: 'Logged out successfully' });
+});
 
   try {
     const products = await knex('products').select('*');
@@ -99,11 +135,10 @@ app.get('/products', async (req, res) => {
 });
 
 // View cart
-app.get('/cart', async (req, res) => {
-  if (!req.user_id) {
-    return res.status(401).send('Unauthorized: Please log in');
-  }
+app.get('/cart', authenticateJWT, async (req, res) => {
 
+// List cart
+app.get('/cart/list', authenticateJWT, async (req, res) => {
   try {
     const cartItems = await knex('cart')
       .leftJoin('products', 'cart.product_id', 'products.id')
@@ -138,11 +173,7 @@ app.get('/cart', async (req, res) => {
 });
 
 // Add to cart
-app.post('/cart/add', async (req, res) => {
-  if (!req.user_id) {
-    return res.status(401).json({ error: 'Unauthorized: Please log in' });
-  }
-
+app.post('/cart/add', authenticateJWT, async (req, res) => {
   try {
     const existingItem = await knex('cart')
       .where({ user_id: req.user_id, product_id: req.body.product_id })
@@ -165,10 +196,7 @@ app.post('/cart/add', async (req, res) => {
 });
 
 // Clear cart
-app.post('/cart/clear', async (req, res) => {
-  if (!req.user_id) {
-    return res.status(401).json({ error: 'Unauthorized: Please log in' });
-  }
+app.post('/cart/clear', authenticateJWT, async (req, res) => {
   try {
     const deletedRows = await knex('cart').where('user_id', req.user_id).del();
     res.status(200).json({ message: 'Cart cleared successfully' });
@@ -178,7 +206,7 @@ app.post('/cart/clear', async (req, res) => {
 });
 
 // Checkout
-app.post('/checkout', async (req, res) => {
+app.post('/checkout', authenticateJWT, async (req, res) => {
   res.send('Checkout Complete');
 });
 
