@@ -13,6 +13,7 @@ Feature: E-Commerce API Endpoints
     When I clear the cart
     And I request the cart page
     Then I should receive the cart page
+    And I am logged in via HTML form
 
   Scenario: Add an item to the cart
     When I clear the cart
@@ -32,6 +33,7 @@ Feature: E-Commerce API Endpoints
     When I request the checkout page
     Then I should receive a checkout confirmation
 
+    And I am logged in via HTML form
   Scenario: Access protected endpoint without authentication
     Given the API is running
     When I request the product list without logging in

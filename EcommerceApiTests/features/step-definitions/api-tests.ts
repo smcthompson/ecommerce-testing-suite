@@ -46,9 +46,19 @@ Given('I am logged in', async function () {
   this.token = loginRes.body.token;
 });
 
+Given('I am logged in via HTML form', async function () {
+  const username = generateUniqueUsername();
+  const loginRes = await request(baseUrl)
+    .post('/login')
+    .send({ username, password: '7357[U53R]' })
+    .set('Content-Type', 'application/x-www-form-urlencoded')
+    .set('Accept', 'text/html')
     .agent(agent);
   
   expect(loginRes.status).to.equal(302);
+  expect(loginRes.headers.location).to.equal('/');
+  expect(loginRes.headers['set-cookie']).to.be.an('array').with.length.greaterThan(0);
+  expect(loginRes.headers['set-cookie'][0]).to.include('jwt=');
   this.cookies = loginRes.headers['set-cookie'];
 });
 
