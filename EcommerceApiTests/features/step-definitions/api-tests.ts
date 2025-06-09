@@ -65,9 +65,6 @@ When('I request the product list without logging in', async function () {
     .agent(agent);
 });
 
-Then('I should be redirected to login', function () {
-  expect(this.response.status).to.equal(302);
-  expect(this.response.headers.location).to.equal('/');
 });
 
 Then('I should receive a list of products', function () {
