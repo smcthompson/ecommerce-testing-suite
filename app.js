@@ -77,22 +77,26 @@ app.post('/login', async (req, res) => {
 
   // Validate form data
   if (!username || !password) {
+    if (req.accepts('html')) {
+      return res.status(400).sendFile(path.join(__dirname, 'public', 'login.html'));
+    }
     return res.status(400).json({ error: 'Username and password are required' });
   }
 
   try {
-    // Check if the user exists
-    let user = await knex('users')
-      .where({ username, password })
-      .first();
-
-    // If user doesn't exist, create a new one
+    let user = await knex('users').where({ username }).first();
     if (!user) {
+      const hashedPassword = await bcrypt.hash(password, 10);
       const [newUserId] = await knex('users').insert({
         username,
-        password,
+        password: hashedPassword,
       });
-      user = { id: newUserId, username, password };
+      user = { id: newUserId, username, password: hashedPassword };
+    } else if (!(await bcrypt.compare(password, user.password))) {
+      if (req.accepts('html')) {
+        return res.status(401).sendFile(path.join(__dirname, 'public', 'login.html'));
+      }
+      return res.status(401).json({ error: 'Invalid username or password' });
     }
 
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1d' });
@@ -107,7 +111,10 @@ app.post('/login', async (req, res) => {
       return res.json({ token });
     }
   } catch (err) {
-    res.status(500).json({ error: 'Login failed' });
+    if (req.accepts('html')) {
+      return res.status(500).sendFile(path.join(__dirname, 'public', 'login.html'));
+    }
+    return res.status(500).json({ error: 'Login failed' });
   }
 });
 
