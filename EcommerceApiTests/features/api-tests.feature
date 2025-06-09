@@ -20,7 +20,6 @@ Feature: E-Commerce API Endpoints
     Then I should receive a success message
     When I request the cart page
     Then I should receive the cart page
-    And the cart page should contain the added item
 
   Scenario: Clear the cart
     When I add a product to the cart

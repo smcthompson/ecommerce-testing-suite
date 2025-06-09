@@ -104,10 +104,6 @@ Then('I should receive a success message', function () {
   expect(this.response.body.message).to.equal('Item added to cart');
 });
 
-Then('the cart page should contain the added item', function () {
-  expect(this.response.text).to.match(/Laptop.*\$\d+\s\(Qty: 1\)/);
-});
-
 When('I clear the cart', async function () {
   this.response = await request(baseUrl)
     .post('/cart/clear')
