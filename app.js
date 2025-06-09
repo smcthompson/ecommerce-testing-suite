@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret-key';
 
 
-// Configre HTTP server
+// Configure HTTP server
 const protocol = process.env.PROTOCOL || 'https';
 const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || 3000;
@@ -49,17 +49,13 @@ const authenticateJWT = (req, res, next) => {
 
 // Initialize Express app
 const app = express();
-// JSON middleware
 app.use(express.json());
-// Parse URL-encoded bodies (for form submissions)
 app.use(express.urlencoded({ extended: true }));
-// CORS middleware
 app.use(cookieParser());
 app.use(cors({
   origin: `${protocol}://${host}`,
   credentials: true,
 }));
-// Compression middleware
 app.use(compression());
 
 // Root route
@@ -71,11 +67,10 @@ app.get('/', authenticateJWT, async (req, res) => {
   });
 });
 
-// Login endpoint with server-side redirect
+// Login endpoint
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
-  // Validate form data
   if (!username || !password) {
     if (req.accepts('html')) {
       return res.status(400).sendFile(path.join(__dirname, 'public', 'login.html'));
@@ -156,7 +151,6 @@ app.get('/cart/list', authenticateJWT, async (req, res) => {
       .select('products.id', 'products.name', 'products.price', 'cart.quantity');
     res.json(cartItems);
   } catch (err) {
-    res.status(500).send('Error loading cart');
     res.status(500).json({ error: 'Error loading cart' });
   }
 });
