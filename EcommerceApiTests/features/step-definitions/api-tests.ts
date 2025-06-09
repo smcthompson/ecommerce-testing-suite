@@ -29,9 +29,10 @@ Given('the API is running', async function () {
 
 Given('I am logged in', async function () {
   // Store cookies for authenticated session
+  const username = generateUniqueUsername();
   const loginRes = await request(baseUrl)
     .post('/login')
-    .send({ username: generateUniqueUsername(), password: '7357[U53R]' })
+    .send({ username, password: '7357[U53R]' })
     .set('Content-Type', 'application/json')
     .agent(agent);
   
