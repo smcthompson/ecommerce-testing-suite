@@ -75,6 +75,13 @@ When('I request the product list without logging in', async function () {
     .agent(agent);
 });
 
+Then('I should receive the login page', function () {
+  expect(this.response.status).to.be.oneOf([200, 401]);
+  if (this.response.status === 200) {
+    expect(this.response.text).to.include('Login');
+  } else {
+    expect(this.response.body).to.have.property('error').that.includes('Unauthorized');
+  }
 });
 
 Then('I should receive a list of products', function () {

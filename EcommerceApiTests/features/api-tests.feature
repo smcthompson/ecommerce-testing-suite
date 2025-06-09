@@ -37,3 +37,4 @@ Feature: E-Commerce API Endpoints
   Scenario: Access protected endpoint without authentication
     Given the API is running
     When I request the product list without logging in
+    Then I should receive the login page
