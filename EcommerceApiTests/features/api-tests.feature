@@ -23,6 +23,7 @@ Feature: E-Commerce API Endpoints
     Then I should receive a success message
     Then I should receive the cart page
     When I request the cart list
+    Then I should receive a list of cart items
 
   Scenario: Clear the cart
     When I add a product to the cart
@@ -36,6 +37,7 @@ Feature: E-Commerce API Endpoints
     Then I should receive a checkout confirmation
 
     And I request the cart list
+    Then I should receive a list of cart items
     And I am logged in via HTML form
   Scenario: Access protected endpoint without authentication
     Given the API is running

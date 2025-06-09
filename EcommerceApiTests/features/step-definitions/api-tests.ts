@@ -112,6 +112,11 @@ When('I request the cart list', async function () {
     .agent(agent);
 });
 
+Then('I should receive a list of cart items', function () {
+  expect(this.response.status).to.equal(200);
+  expect(this.response.body).to.be.an('array');
+});
+
 });
 
 When('I add a product to the cart', async function () {
