@@ -65,7 +65,7 @@ Given('I am logged in via HTML form', async function () {
 When('I request the product list', async function () {
   this.response = await request(baseUrl)
     .get('/products')
-    .set('Cookie', this.cookies)
+    .set('Authorization', `Bearer ${this.token}`)
     .agent(agent);
 });
 
