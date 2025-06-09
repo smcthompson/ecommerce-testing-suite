@@ -85,7 +85,7 @@ Then('the cart page should contain no items', function () {
 When('I add a product to the cart', async function () {
   this.response = await request(baseUrl)
     .post('/cart/add')
-    .set('Cookie', this.cookies)
+    .set('Authorization', `Bearer ${this.token}`)
     .send({ product_id: 1, quantity: 1 })
     .set('Content-Type', 'application/json')
     .agent(agent);
@@ -103,7 +103,7 @@ Then('the cart page should contain the added item', function () {
 When('I clear the cart', async function () {
   this.response = await request(baseUrl)
     .post('/cart/clear')
-    .set('Cookie', this.cookies)
+    .set('Authorization', `Bearer ${this.token}`)
     .agent(agent);
 });
 
@@ -115,7 +115,7 @@ Then('I should receive a cart cleared message', function () {
 When('I request the checkout page', async function () {
   this.response = await request(baseUrl)
     .post('/checkout')
-    .set('Cookie', this.cookies)
+    .set('Authorization', `Bearer ${this.token}`)
     .agent(agent);
 });
 
