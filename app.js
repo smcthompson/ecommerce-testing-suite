@@ -56,7 +56,7 @@ app.use(express.urlencoded({ extended: true }));
 // CORS middleware
 app.use(cookieParser());
 app.use(cors({
-  origin: `${protocol}://${host}:${port}`,
+  origin: `${protocol}://${host}`,
   credentials: true,
 }));
 // Compression middleware
