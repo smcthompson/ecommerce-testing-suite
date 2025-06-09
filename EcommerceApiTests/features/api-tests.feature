@@ -1,8 +1,8 @@
 Feature: E-Commerce API Endpoints
 
   Background: API running and user logged in
-   And I am logged in
     Given the API is running
+    And I am logged in
 
   Scenario: Retrieve product list with authentication
     When I request the product list

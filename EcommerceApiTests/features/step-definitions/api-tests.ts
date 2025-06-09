@@ -38,6 +38,14 @@ Given('I am logged in', async function () {
     .post('/login')
     .send({ username, password: '7357[U53R]' })
     .set('Content-Type', 'application/json')
+    .set('Accept', 'application/json')
+    .agent(agent);
+  
+  expect(loginRes.status).to.equal(200);
+  expect(loginRes.body).to.have.property('token');
+  this.token = loginRes.body.token;
+});
+
     .agent(agent);
   
   expect(loginRes.status).to.equal(302);
