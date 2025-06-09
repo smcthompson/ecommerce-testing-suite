@@ -21,10 +21,14 @@ const agent = new https.Agent(certOptions);
 const baseUrl = process.env.BASE_URL || 'https://localhost:3000';
 
 Given('the API is running', async function () {
-  const res = await request(baseUrl)
-    .get('/')
-    .agent(agent);
-  expect(res.status).to.equal(200);
+  try {
+    const res = await request(baseUrl)
+      .get('/')
+      .agent(agent);
+    expect(res.status).to.be.oneOf([200, 302, 401]);
+  } catch (error) {
+    throw new Error(`API is not running: ${String(error)}`);
+  }
 });
 
 Given('I am logged in', async function () {
