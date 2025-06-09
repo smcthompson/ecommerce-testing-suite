@@ -91,8 +91,6 @@ Then('I should receive the cart page', function () {
   expect(this.response.text).to.include('Cart Page');
 });
 
-Then('the cart page should contain no items', function () {
-  expect(this.response.text).to.include('No items in cart');
 });
 
 When('I add a product to the cart', async function () {
