@@ -8,6 +8,7 @@
         ],
         "format": [
             "progress-bar"
-        ]
+        ],
+        "parallel": 10
     }
 }
