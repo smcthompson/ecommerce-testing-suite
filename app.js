@@ -139,6 +139,13 @@ app.get('/products', authenticateJWT, async (req, res) => {
 
 // View cart
 app.get('/cart', authenticateJWT, async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'cart.html'), (err) => {
+    if (err) {
+      console.error('Error serving cart.html:', err);
+      res.status(500).json({ error: 'Error loading cart list page' });
+    }
+  });
+});
 
 // List cart
 app.get('/cart/list', authenticateJWT, async (req, res) => {
@@ -147,31 +154,10 @@ app.get('/cart/list', authenticateJWT, async (req, res) => {
       .leftJoin('products', 'cart.product_id', 'products.id')
       .where('cart.user_id', req.user_id)
       .select('products.id', 'products.name', 'products.price', 'cart.quantity');
-    const cartHtml = cartItems.length > 0 && cartItems[0].name
-      ? cartItems.map(item => `<li>${item.name} - $${item.price} (Qty: ${item.quantity})</li>`).join('')
-      : '<li>No items in cart</li>';
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head><title>Cart Page</title></head>
-      <body>
-        <h1>Cart Page</h1>
-        <ul id="cart-items">${cartHtml}</ul>
-        <form id="checkout-form" action="/checkout" method="POST">
-          <button id="checkout-button">Proceed to Checkout</button>
-        </form>
-        <form id="clear-cart-form" action="/cart/clear" method="POST">
-          <button id="clear-cart-button">Clear Cart</button>
-        </form>
-        <a href="/">Back to Products</a>
-        <form action="/logout" method="POST">
-          <button type="submit">Logout</button>
-        </form>
-      </body>
-      </html>
-    `);
+    res.json(cartItems);
   } catch (err) {
     res.status(500).send('Error loading cart');
+    res.status(500).json({ error: 'Error loading cart' });
   }
 });
 
