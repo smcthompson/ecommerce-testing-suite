@@ -10,22 +10,22 @@ Feature: E-Commerce API Endpoints
     And the list should contain 2 products
 
   Scenario: Access the cart page with no items
-    And I clear the cart
-    When I request the cart page
+    When I clear the cart
+    And I request the cart page
     Then I should receive the cart page
     And the cart page should contain no items
 
   Scenario: Add an item to the cart
-    And I clear the cart
-    When I add a product to the cart
+    When I clear the cart
+    And I add a product to the cart
     Then I should receive a success message
     When I request the cart page
     Then I should receive the cart page
     And the cart page should contain the added item
 
   Scenario: Clear the cart
-    And I add a product to the cart
-    When I clear the cart
+    When I add a product to the cart
+    And I clear the cart
     Then I should receive a cart cleared message
     When I request the cart page
     Then I should receive the cart page
