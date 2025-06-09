@@ -105,6 +105,13 @@ Then('I should receive the cart page', function () {
   expect(this.response.text).to.include('Cart Page');
 });
 
+When('I request the cart list', async function () {
+  this.response = await request(baseUrl)
+    .get('/cart/list')
+    .set('Authorization', `Bearer ${this.token}`)
+    .agent(agent);
+});
+
 });
 
 When('I add a product to the cart', async function () {

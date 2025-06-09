@@ -13,26 +13,29 @@ Feature: E-Commerce API Endpoints
     When I clear the cart
     And I request the cart page
     Then I should receive the cart page
+    When I request the cart list
     And I am logged in via HTML form
+    When I request the cart list
 
   Scenario: Add an item to the cart
     When I clear the cart
     And I add a product to the cart
     Then I should receive a success message
-    When I request the cart page
     Then I should receive the cart page
+    When I request the cart list
 
   Scenario: Clear the cart
     When I add a product to the cart
     And I clear the cart
     Then I should receive a cart cleared message
-    When I request the cart page
     Then I should receive the cart page
+    When I request the cart list
 
   Scenario: Complete checkout
     When I request the checkout page
     Then I should receive a checkout confirmation
 
+    And I request the cart list
     And I am logged in via HTML form
   Scenario: Access protected endpoint without authentication
     Given the API is running
