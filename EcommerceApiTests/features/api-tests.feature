@@ -14,7 +14,12 @@ Feature: E-Commerce API Endpoints
     And I request the cart page
     Then I should receive the cart page
     When I request the cart list
+
+  Scenario: Access the cart page with cookies
+    Given the API is running
     And I am logged in via HTML form
+    When I request the cart page with cookies
+    Then I should receive the cart page
     When I request the cart list
 
   Scenario: Add an item to the cart

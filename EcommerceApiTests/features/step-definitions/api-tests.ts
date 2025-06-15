@@ -96,6 +96,13 @@ Then('the list should contain {int} products', function (count: number) {
 When('I request the cart page', async function () {
   this.response = await request(baseUrl)
     .get('/cart')
+    .set('Authorization', `Bearer ${this.token}`)
+    .agent(agent);
+});
+
+When('I request the cart page with cookies', async function () {
+  this.response = await request(baseUrl)
+    .get('/cart')
     .set('Cookie', this.cookies)
     .agent(agent);
 });
