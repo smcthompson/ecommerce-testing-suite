@@ -124,6 +124,9 @@ Then('I should receive a list of cart items', function () {
   expect(this.response.body).to.be.an('array');
 });
 
+Then('the cart should be empty', function () {
+  expect(this.response.status).to.equal(200);
+  expect(this.response.body).to.be.an('array').that.is.empty;
 });
 
 When('I add a product to the cart', async function () {

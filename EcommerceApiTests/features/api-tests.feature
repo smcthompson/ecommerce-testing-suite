@@ -14,6 +14,7 @@ Feature: E-Commerce API Endpoints
     And I request the cart page
     Then I should receive the cart page
     When I request the cart list
+    Then the cart should be empty
 
   Scenario: Access the cart page with cookies
     Given the API is running
@@ -21,6 +22,7 @@ Feature: E-Commerce API Endpoints
     When I request the cart page with cookies
     Then I should receive the cart page
     When I request the cart list
+    Then the cart should be empty
 
   Scenario: Add an item to the cart
     When I clear the cart
@@ -36,6 +38,7 @@ Feature: E-Commerce API Endpoints
     Then I should receive a cart cleared message
     Then I should receive the cart page
     When I request the cart list
+    Then the cart should be empty
 
   Scenario: Complete checkout
     When I request the checkout page
