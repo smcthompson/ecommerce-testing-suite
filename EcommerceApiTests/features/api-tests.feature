@@ -49,6 +49,9 @@ Feature: E-Commerce API Endpoints
     And I add a product to the cart
     And I request the cart list
     Then I should receive a list of cart items
+
+  Scenario: Logout clears session
+    Given the API is running
     And I am logged in via HTML form
     When I logout
     Then I should be logged out
