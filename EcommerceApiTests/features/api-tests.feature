@@ -44,6 +44,9 @@ Feature: E-Commerce API Endpoints
     When I request the checkout page
     Then I should receive a checkout confirmation
 
+  Scenario: Retrieve cart list
+    When I clear the cart
+    And I add a product to the cart
     And I request the cart list
     Then I should receive a list of cart items
     And I am logged in via HTML form
