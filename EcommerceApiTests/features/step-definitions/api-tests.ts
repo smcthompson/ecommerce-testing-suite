@@ -166,3 +166,10 @@ Then('I should receive a checkout confirmation', function () {
   expect(this.response.status).to.equal(200);
   expect(this.response.text).to.equal('Checkout Complete');
 });
+When('I logout', async function () {
+  this.response = await request(baseUrl)
+    .post('/logout')
+    .set('Cookie', this.cookies)
+    .agent(agent);
+});
+
