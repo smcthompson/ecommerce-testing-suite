@@ -173,3 +173,9 @@ When('I logout', async function () {
     .agent(agent);
 });
 
+Then('I should be logged out', function () {
+  expect(this.response.status).to.equal(302);
+  expect(this.response.headers.location).to.equal('/');
+  expect(this.response.headers['set-cookie']).to.be.an('array');
+  expect(this.response.headers['set-cookie'][0]).to.include('jwt=;');
+});
