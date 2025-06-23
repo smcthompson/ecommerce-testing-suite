@@ -70,8 +70,7 @@ test.describe('E-Commerce Site Tests', () => {
   });
 
   test('Product list loads', async ({ page }) => {
-    const products = await page.$$('li');
-    expect(products.length).toBeGreaterThan(0);
+    await expect(page.locator('#product-list li')).toHaveCount(2);
   });
 
   test('Cart navigation works', async ({ page }) => {
