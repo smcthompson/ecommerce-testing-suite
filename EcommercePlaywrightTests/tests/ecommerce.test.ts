@@ -9,8 +9,8 @@ const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 test.describe('E-Commerce Site Tests', () => {
   let username: string;
 
-  test.beforeEach(async ({ page, request }) => {
     // Generate a unique username for this test
+  test.beforeEach(async ({ page }) => {
     username = generateUniqueUsername();
 
     // Log in with the unique user
