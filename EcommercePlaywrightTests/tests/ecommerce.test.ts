@@ -18,7 +18,8 @@ test.describe('E-Commerce Site Tests', () => {
     await page.fill('input[name="username"]', username);
     await page.fill('input[name="password"]', '7357[U53R]');
     await page.click('button[type="submit"]');
-    await page.waitForSelector('#product-list li');
+    await page.waitForURL(`${BASE_URL}/`);
+    await page.waitForSelector('#product-list li', { state: 'visible' });
   });
 
   // Clear cart
