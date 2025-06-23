@@ -107,4 +107,26 @@ test.describe('E-Commerce Site Tests', () => {
     await page.waitForURL(`${BASE_URL}/`);
     await expect(page.locator('h1')).toHaveText('Products');
   });
+
+  test('Logout clears cookie and token', async ({ page }) => {
+    // Trigger logout
+    await page.click('form#logout button');
+
+    // Wait for navigation and DOM load
+    await page.waitForURL(`${BASE_URL}/`);
+    await page.waitForLoadState('domcontentloaded');
+
+    // Wait until cookie is actually removed
+    await page.waitForFunction(() => !document.cookie.includes('jwt'));
+
+    // Validate cookie is gone
+    const cookies = await page.context().cookies();
+    const jwtCookie = cookies.find(cookie => cookie.name === 'jwt');
+    expect(jwtCookie).toBeUndefined();
+
+    // Validate sessionStorage token is cleared
+    await page.waitForFunction(() => sessionStorage.getItem('jwt') === null);
+    const token = await page.evaluate(() => sessionStorage.getItem('jwt'));
+    expect(token).toBeNull();
+  });
 });
