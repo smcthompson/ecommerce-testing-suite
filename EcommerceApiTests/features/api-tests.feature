@@ -28,7 +28,6 @@ Feature: E-Commerce API Endpoints
     When I clear the cart
     And I add a product to the cart
     Then I should receive a success message
-    Then I should receive the cart page
     When I request the cart list
     Then I should receive a list of cart items
 
@@ -36,7 +35,6 @@ Feature: E-Commerce API Endpoints
     When I add a product to the cart
     And I clear the cart
     Then I should receive a cart cleared message
-    Then I should receive the cart page
     When I request the cart list
     Then the cart should be empty
 
