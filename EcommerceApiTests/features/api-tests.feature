@@ -53,6 +53,7 @@ Feature: E-Commerce API Endpoints
     And I am logged in via HTML form
     When I logout
     Then I should be logged out
+
   Scenario: Access protected endpoint without authentication
     Given the API is running
     When I request the product list without logging in

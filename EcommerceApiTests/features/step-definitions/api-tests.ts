@@ -17,7 +17,6 @@ const certOptions = {
 
 // Create a custom HTTPS agent with the certificates
 const agent = new https.Agent(certOptions);
-
 const baseUrl = process.env.BASE_URL || 'https://localhost:3000';
 
 Given('the API is running', async function () {
@@ -32,7 +31,6 @@ Given('the API is running', async function () {
 });
 
 Given('I am logged in', async function () {
-  // Store cookies for authenticated session
   const username = generateUniqueUsername();
   const loginRes = await request(baseUrl)
     .post('/login')
@@ -166,6 +164,7 @@ Then('I should receive a checkout confirmation', function () {
   expect(this.response.status).to.equal(200);
   expect(this.response.text).to.equal('Checkout Complete');
 });
+
 When('I logout', async function () {
   this.response = await request(baseUrl)
     .post('/logout')
