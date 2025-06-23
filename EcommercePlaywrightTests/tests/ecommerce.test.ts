@@ -78,7 +78,7 @@ test.describe('E-Commerce Site Tests', () => {
     await page.waitForURL(`${BASE_URL}/cart`);
     await expect(page.locator('h1')).toHaveText('Cart Page');
     await expect(page.locator('#cart-items li')).toContainText('No items in cart');
-    await expect(page.locator('#checkout-button')).toBeVisible();
+    await expect(page.locator('#checkout')).toBeVisible();
     await expect(page.locator('text=Back to Products')).toBeVisible();
   });
 
