@@ -46,6 +46,27 @@ test.describe('E-Commerce Site Tests', () => {
     } catch (e) {
     }
   });
+
+  test('Login sets cookie and token', async ({ page }) => {
+    // Wait until sessionStorage has the jwt token (handles async token injection)
+    await page.waitForFunction(() => sessionStorage.getItem('jwt') !== null);
+
+    // Wait until the page has finished loading and is stable
+    await page.waitForLoadState('domcontentloaded');
+
+    // Wait for a stable element post-login (replace selector with something meaningful)
+    await page.waitForSelector('#logout'); // Adjust as needed
+
+    // Verify the jwt cookie
+    const cookies = await page.context().cookies();
+    const jwtCookie = cookies.find(cookie => cookie.name === 'jwt');
+    expect(jwtCookie).toBeDefined();
+    expect(jwtCookie?.value).toBeTruthy();
+
+    // Now it's safe to evaluate in the browser context
+    const token = await page.evaluate(() => sessionStorage.getItem('jwt'));
+    expect(token).toBeTruthy();
+    expect(token).toEqual(jwtCookie?.value);
   });
 
   test('Product list loads', async ({ page }) => {
