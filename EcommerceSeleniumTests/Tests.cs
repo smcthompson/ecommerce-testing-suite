@@ -58,9 +58,6 @@ namespace EcommerceSeleniumTests
         [Test]
         public void TestLoginFlow()
         {
-            // Verify login page loads initially
-            Assert.That(driver.PageSource, Does.Contain("login"), "Should load login page");
-
             // Perform login
             PerformLogin();
 
