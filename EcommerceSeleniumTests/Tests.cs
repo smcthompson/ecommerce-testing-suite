@@ -14,7 +14,6 @@ namespace EcommerceSeleniumTests
         public void OneTimeSetup()
         {
             var options = new ChromeOptions();
-            // Accept self-signed certificates
             options.AcceptInsecureCertificates = true;
             // Additional configuration to trust the specific certificate
             options.AddArgument("--ignore-certificate-errors");
@@ -111,7 +110,7 @@ namespace EcommerceSeleniumTests
             // Add item to cart
             wait.Until(d => d.FindElement(By.CssSelector("#product-list li button"))).Click();
 
-           // Verify alert message for item added to cart
+            // Verify alert message for item added to cart
             IAlert alert = wait.Until(d => driver.SwitchTo().Alert());
             Assert.That(alert, Is.Not.Null);
             Assert.That(alert.Text, Does.Contain("Item added to cart"));
