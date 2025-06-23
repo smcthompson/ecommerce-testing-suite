@@ -61,9 +61,20 @@ namespace EcommerceSeleniumTests
             // Perform login
             PerformLogin();
 
-            // Wait for redirect and verify products page
-            wait.Until(d => d.Url == BaseUrl + "/");
-            Assert.That(driver.PageSource, Does.Contain("products"), "Should redirect to products page after login");
+            // Check JWT cookie is set
+            Cookie jwtCookie = wait.Until(d =>
+            {
+                Cookie? cookie = d.Manage().Cookies.GetCookieNamed("jwt");
+                return cookie ?? null;
+            });
+            Assert.That(jwtCookie, Is.Not.Null, "JWT cookie should be set after login");
+
+            // Check JWT in session storage
+            var tokenFromStorage = (string?)((IJavaScriptExecutor)driver).ExecuteScript("return sessionStorage.getItem('jwt');");
+            Assert.That(tokenFromStorage, Is.Not.Null, "JWT should be in session storage after login");
+
+            // Check JWT in cookie and session storage match
+            Assert.That(jwtCookie.Value, Is.EqualTo(tokenFromStorage), "JWT in cookie and session storage should match");
         }
 
         [Test]
