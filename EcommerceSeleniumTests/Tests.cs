@@ -6,8 +6,8 @@ namespace EcommerceSeleniumTests
 {
     public class Tests
     {
-        private static IWebDriver driver;
-        private WebDriverWait wait;
+        private static ChromeDriver driver;
+        private DefaultWait<IWebDriver> wait;
         private const string BaseUrl = "https://localhost:8080";
 
         [OneTimeSetUp]
@@ -36,7 +36,15 @@ namespace EcommerceSeleniumTests
             }
 
             driver = new ChromeDriver(options);
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            wait = new DefaultWait<IWebDriver>(driver)
+            {
+                Timeout = TimeSpan.FromSeconds(10),
+                PollingInterval = TimeSpan.FromMilliseconds(250)
+            };
+            wait.IgnoreExceptionTypes(
+                typeof(NoSuchElementException),
+                typeof(NoAlertPresentException)
+            );
         }
 
         [SetUp]
