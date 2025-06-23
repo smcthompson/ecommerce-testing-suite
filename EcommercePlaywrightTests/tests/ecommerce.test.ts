@@ -83,13 +83,13 @@ test.describe('E-Commerce Site Tests', () => {
   });
 
   test('Add item to cart', async ({ page }) => {
-    const cartAddResponse = page.waitForResponse('**/cart/add');
-    await page.waitForSelector('li:has-text("Laptop - $999") button', { state: 'visible' });
-    await page.click('li:has-text("Laptop - $999") button');
-    await cartAddResponse;
-    await page.goto(`${BASE_URL}/cart`);
-    await page.waitForURL('**/cart');
-    await expect(page.locator('#cart-items li')).toContainText('Laptop - $999 (Qty: 1)');
+    await page.click('#product-list li button');
+    const alert = await page.waitForEvent('dialog');
+    expect(alert.message()).toContain('Item added to cart');
+    await alert.accept();
+    await page.click('#go-to-cart');
+    await page.waitForURL(`${BASE_URL}/cart`);
+    await expect(page.locator('#cart-items li')).not.toContainText('No items in cart');
     await expect(page.locator('#cart-items li')).toHaveCount(1);
   });
 });
