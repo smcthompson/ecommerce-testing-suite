@@ -8,7 +8,7 @@ import fs from 'fs';
 // Helper function to create a unique username for each test
 const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 
-// Load the certificates for the HTTPS agent
+// Load certificates for HTTPS agent
 const certOptions = {
   key: fs.readFileSync('../certs/iis-localhost.key'),
   cert: fs.readFileSync('../certs/iis-localhost.crt'),
