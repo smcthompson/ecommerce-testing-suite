@@ -98,7 +98,7 @@ namespace EcommerceSeleniumTests
             PerformLogin();
             
             // Find product listing and verify it's not empty
-            var products = wait.Until(d => d.FindElements(By.CssSelector("#product-list"))).Count > 0;
+            var products = wait.Until(d => d.FindElements(By.CssSelector("#product-list")).Count > 0);
             Assert.That(products, Is.True, "Product list should load and contain items");
         }
 
