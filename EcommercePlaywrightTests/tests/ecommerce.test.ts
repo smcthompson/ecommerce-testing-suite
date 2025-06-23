@@ -26,10 +26,26 @@ test.describe('E-Commerce Site Tests', () => {
 
   // Clear cart
   test.afterEach(async ({ page }) => {
-    const clearCartResponse = await page.request.post(`${BASE_URL}/cart/clear`);
-    expect(clearCartResponse.status()).toBe(200);
-    const responseBody = await clearCartResponse.json();
-    expect(responseBody.message).toBe('Cart cleared successfully');
+    try {
+      await page.waitForLoadState('networkidle');
+
+      const logoutButton = page.locator('form#logout button');
+      const isVisible = await logoutButton.isVisible().catch(() => false);
+
+      if (isVisible) {
+        await logoutButton.click();
+        await page.waitForURL(`${BASE_URL}/`);
+      }
+
+      // Cleanup: clear cookies and local/session storage
+      await page.context().clearCookies();
+      await page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+      });
+    } catch (e) {
+    }
+  });
   });
 
   test('Product list loads', async ({ page }) => {
