@@ -9,7 +9,6 @@ const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 test.describe('E-Commerce Site Tests', () => {
   let username: string;
 
-    // Generate a unique username for this test
   test.beforeEach(async ({ page }) => {
     username = generateUniqueUsername();
 
@@ -24,7 +23,6 @@ test.describe('E-Commerce Site Tests', () => {
     expect(items).toBeGreaterThan(0);
   });
 
-  // Clear cart
   test.afterEach(async ({ page }) => {
     try {
       await page.waitForLoadState('networkidle');
