@@ -150,9 +150,11 @@ namespace EcommerceSeleniumTests
             wait.Until(d => driver.FindElement(By.LinkText("Go to Cart"))).Click();
             wait.Until(d => driver.FindElement(By.CssSelector("#cart-clear button"))).Click();
 
-            // Verify cart is empty
-            wait.Until(d => d.Url.Contains("/cart/clear"));
-            Assert.That(driver.PageSource, Does.Contain("Cart cleared successfully"), "Should show cart cleared message");
+            // Verify alert message for item added to cart
+            IAlert alert = wait.Until(d => driver.SwitchTo().Alert());
+            Assert.That(alert, Is.Not.Null);
+            Assert.That(alert.Text, Does.Contain("Cart cleared successfully"));
+            alert.Accept();
         }
 
         [Test]
