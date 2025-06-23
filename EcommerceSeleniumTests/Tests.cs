@@ -148,7 +148,7 @@ namespace EcommerceSeleniumTests
             
             // Go to cart and clear
             wait.Until(d => driver.FindElement(By.LinkText("Go to Cart"))).Click();
-            wait.Until(d => driver.FindElement(By.Id("clear-cart-button"))).Click();
+            wait.Until(d => driver.FindElement(By.CssSelector("#cart-clear button"))).Click();
 
             // Verify cart is empty
             wait.Until(d => d.Url.Contains("/cart/clear"));
