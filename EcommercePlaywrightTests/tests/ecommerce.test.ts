@@ -7,7 +7,7 @@ const BASE_URL = process.env.BASE_URL || 'https://localhost:8080';
 const generateUniqueUsername = () => `testUser_${uuidv4()}`;
 
 test.describe('E-Commerce Site Tests', () => {
-  let username;
+  let username: string;
 
   test.beforeEach(async ({ page, request }) => {
     // Generate a unique username for this test
