@@ -168,11 +168,17 @@ namespace EcommerceSeleniumTests
             
             // Go to cart and checkout
             wait.Until(d => driver.FindElement(By.LinkText("Go to Cart"))).Click();
-            wait.Until(d => driver.FindElement(By.Id("checkout-button"))).Click();
+            wait.Until(d => driver.FindElement(By.CssSelector("#checkout button"))).Click();
+
+            // Verify alert message for item added to cart
+            IAlert alert = wait.Until(d => driver.SwitchTo().Alert());
+            Assert.That(alert, Is.Not.Null);
+            Assert.That(alert.Text, Does.Contain("Checkout Complete"));
+            alert.Accept();
 
             // Verify checkout completion
-            wait.Until(d => d.Url.Contains("/checkout"));
-            Assert.That(driver.PageSource, Does.Contain("Checkout Complete"), "Should show checkout completion");
+            wait.Until(d => d.Url.Contains("/"));
+            Assert.That(driver.PageSource, Does.Contain("Products"), "Should show product list");
         }
 
         private string generateUniqueUsername() => $"testUser_{Guid.NewGuid()}";
