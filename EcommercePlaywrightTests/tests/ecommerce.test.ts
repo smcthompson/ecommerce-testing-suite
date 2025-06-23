@@ -92,4 +92,19 @@ test.describe('E-Commerce Site Tests', () => {
     await expect(page.locator('#cart-items li')).not.toContainText('No items in cart');
     await expect(page.locator('#cart-items li')).toHaveCount(1);
   });
+
+  test('Checkout redirects to products page', async ({ page }) => {
+    await page.click('#product-list li button');
+    const addAlert = await page.waitForEvent('dialog');
+    expect(addAlert.message()).toContain('Item added to cart');
+    await addAlert.accept();
+    await page.click('#go-to-cart');
+    await page.waitForURL(`${BASE_URL}/cart`);
+    await page.click('form#checkout button');
+    const checkoutAlert = await page.waitForEvent('dialog');
+    expect(checkoutAlert.message()).toContain('Checkout Complete');
+    await checkoutAlert.accept();
+    await page.waitForURL(`${BASE_URL}/`);
+    await expect(page.locator('h1')).toHaveText('Products');
+  });
 });
