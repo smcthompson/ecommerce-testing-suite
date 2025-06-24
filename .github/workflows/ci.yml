@@ -20,6 +20,10 @@ jobs:
       run: npm install
     - name: Install Playwright Browsers
       run: npx playwright install --with-deps
+    - name: Install Playwright
+      run: cd EcommercePlaywrightTests && npm install @playwright/test
+    - name: Install Playwright Browsers
+      run: cd EcommercePlaywrightTests && npx playwright install --with-deps
     - name: Install Playwright Test Dependencies
       run: cd EcommercePlaywrightTests && npm install
     - name: Install Cucumber Test Dependencies

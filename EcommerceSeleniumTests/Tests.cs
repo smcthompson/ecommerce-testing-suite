@@ -6,15 +6,14 @@ namespace EcommerceSeleniumTests
 {
     public class Tests
     {
-        private static IWebDriver driver;
-        private WebDriverWait wait;
+        private static ChromeDriver driver;
+        private DefaultWait<IWebDriver> wait;
         private const string BaseUrl = "https://localhost:8080";
 
         [OneTimeSetUp]
         public void OneTimeSetup()
         {
             var options = new ChromeOptions();
-            // Accept self-signed certificates
             options.AcceptInsecureCertificates = true;
             // Additional configuration to trust the specific certificate
             options.AddArgument("--ignore-certificate-errors");
@@ -36,7 +35,15 @@ namespace EcommerceSeleniumTests
             }
 
             driver = new ChromeDriver(options);
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            wait = new DefaultWait<IWebDriver>(driver)
+            {
+                Timeout = TimeSpan.FromSeconds(10),
+                PollingInterval = TimeSpan.FromMilliseconds(250)
+            };
+            wait.IgnoreExceptionTypes(
+                typeof(NoSuchElementException),
+                typeof(NoAlertPresentException)
+            );
         }
 
         [SetUp]
@@ -50,15 +57,23 @@ namespace EcommerceSeleniumTests
         [Test]
         public void TestLoginFlow()
         {
-            // Verify login page loads initially
-            Assert.That(driver.PageSource, Does.Contain("login"), "Should load login page");
-
             // Perform login
             PerformLogin();
 
-            // Wait for redirect and verify products page
-            wait.Until(d => d.Url == BaseUrl + "/");
-            Assert.That(driver.PageSource, Does.Contain("products"), "Should redirect to products page after login");
+            // Check JWT cookie is set
+            Cookie jwtCookie = wait.Until(d =>
+            {
+                Cookie? cookie = d.Manage().Cookies.GetCookieNamed("jwt");
+                return cookie ?? null;
+            });
+            Assert.That(jwtCookie, Is.Not.Null, "JWT cookie should be set after login");
+
+            // Check JWT in session storage
+            var tokenFromStorage = (string?)((IJavaScriptExecutor)driver).ExecuteScript("return sessionStorage.getItem('jwt');");
+            Assert.That(tokenFromStorage, Is.Not.Null, "JWT should be in session storage after login");
+
+            // Check JWT in cookie and session storage match
+            Assert.That(jwtCookie.Value, Is.EqualTo(tokenFromStorage), "JWT in cookie and session storage should match");
         }
 
         [Test]
@@ -82,7 +97,7 @@ namespace EcommerceSeleniumTests
             PerformLogin();
             
             // Find product listing and verify it's not empty
-            var products = wait.Until(d => d.FindElements(By.CssSelector("#product-list"))).Count > 0;
+            var products = wait.Until(d => d.FindElements(By.CssSelector("#product-list")).Count > 0);
             Assert.That(products, Is.True, "Product list should load and contain items");
         }
 
@@ -95,7 +110,7 @@ namespace EcommerceSeleniumTests
             // Add item to cart
             wait.Until(d => d.FindElement(By.CssSelector("#product-list li button"))).Click();
 
-           // Verify alert message for item added to cart
+            // Verify alert message for item added to cart
             IAlert alert = wait.Until(d => driver.SwitchTo().Alert());
             Assert.That(alert, Is.Not.Null);
             Assert.That(alert.Text, Does.Contain("Item added to cart"));
@@ -132,11 +147,13 @@ namespace EcommerceSeleniumTests
             
             // Go to cart and clear
             wait.Until(d => driver.FindElement(By.LinkText("Go to Cart"))).Click();
-            wait.Until(d => driver.FindElement(By.Id("clear-cart-button"))).Click();
+            wait.Until(d => driver.FindElement(By.CssSelector("#cart-clear button"))).Click();
 
-            // Verify cart is empty
-            wait.Until(d => d.Url.Contains("/cart/clear"));
-            Assert.That(driver.PageSource, Does.Contain("Cart cleared successfully"), "Should show cart cleared message");
+            // Verify alert message for item added to cart
+            IAlert alert = wait.Until(d => driver.SwitchTo().Alert());
+            Assert.That(alert, Is.Not.Null);
+            Assert.That(alert.Text, Does.Contain("Cart cleared successfully"));
+            alert.Accept();
         }
 
         [Test]
@@ -150,11 +167,17 @@ namespace EcommerceSeleniumTests
             
             // Go to cart and checkout
             wait.Until(d => driver.FindElement(By.LinkText("Go to Cart"))).Click();
-            wait.Until(d => driver.FindElement(By.Id("checkout-button"))).Click();
+            wait.Until(d => driver.FindElement(By.CssSelector("#checkout button"))).Click();
+
+            // Verify alert message for item added to cart
+            IAlert alert = wait.Until(d => driver.SwitchTo().Alert());
+            Assert.That(alert, Is.Not.Null);
+            Assert.That(alert.Text, Does.Contain("Checkout Complete"));
+            alert.Accept();
 
             // Verify checkout completion
-            wait.Until(d => d.Url.Contains("/checkout"));
-            Assert.That(driver.PageSource, Does.Contain("Checkout Complete"), "Should show checkout completion");
+            wait.Until(d => d.Url.Contains("/"));
+            Assert.That(driver.PageSource, Does.Contain("Products"), "Should show product list");
         }
 
         private string generateUniqueUsername() => $"testUser_{Guid.NewGuid()}";

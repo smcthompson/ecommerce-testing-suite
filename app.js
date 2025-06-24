@@ -1,15 +1,17 @@
 const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
-const session = require('express-session');
-const { ConnectSessionKnexStore } = require('connect-session-knex');
+const cookieParser = require('cookie-parser');
 const knex = require('knex')(require('./knexfile'));
 const path = require('path');
 const https = require('https');
 const fs = require('fs');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret-key';
 
 
-// Configre HTTP server
+// Configure HTTP server
 const protocol = process.env.PROTOCOL || 'https';
 const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || 3000;
@@ -19,127 +21,109 @@ const httpsOptions = {
   cert: fs.readFileSync('certs/iis-localhost.crt'),
 };
 
-// Configure session store
-const store = new ConnectSessionKnexStore({
-  knex,
-  tablename: 'sessions',
-  createTable: true,
-  sidfieldname: 'sid',
-  logErrors: (err) => {
-    console.error('Session store error:', err);
-  },
-});
-// Add logging for session store operations
-store.on('connect', () => {
-});
-store.on('error', (err) => {
-});
+// Middleware to verify JWT
+const authenticateJWT = (req, res, next) => {
+  let token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    token = req.cookies?.jwt;
+  }
+  if (!token) {
+    if (req.accepts('html')) {
+      return res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    }
+    return res.status(401).json({ error: 'Unauthorized: No token provided' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user_id = decoded.userId;
+    next();
+  } catch (err) {
+    console.error('JWT verification error:', err);
+    if (req.accepts('html')) {
+      return res.sendFile(path.join(__dirname, 'public', 'login.html'));
+    }
+    return res.status(403).json({ error: 'Unauthorized: Invalid token' });
+  }
+};
 
 // Initialize Express app
 const app = express();
-// JSON middleware
 app.use(express.json());
-// Parse URL-encoded bodies (for form submissions)
 app.use(express.urlencoded({ extended: true }));
-// Session middleware
-app.use(session({
-  secret: 'your-secret-key',
-  resave: false,
-  saveUninitialized: false,
-  store: store,
-  cookie: {
-    maxAge: 24 * 60 * 60 * 1000,
-    secure: true,
-    httpOnly: true,
-    sameSite: 'lax',
-    path: '/',
-  },
-}));
-// CORS middleware
+app.use(cookieParser());
 app.use(cors({
-  origin: `${protocol}://${host}:${port}`,
+  origin: `${protocol}://${host}`,
   credentials: true,
 }));
-// Middleware to set user_id and session_id in req
-app.use((req, res, next) => {
-  req.user_id = req.session.userId || null;
-  req.session_id = req.session.id;
-  next();
-});
-// Compression middleware
 app.use(compression());
 
 // Root route
-app.get('/', async (req, res) => {
-  // Check if the user is not logged in
-  if (!req.session.userId) {
-    return res.sendFile(path.join(__dirname, 'public', 'login.html'));
-  }
-
-  // If user is logged in, serve the product list page
-  res.sendFile(path.join(__dirname, 'public', 'products.html'),
-    (err) => {
-      if (err) {
-        res.status(500).send('Error loading product list page');
-      }
+app.get('/', authenticateJWT, async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'products.html'), (err) => {
+    if (err) {
+      res.status(500).json({ error: 'Failed to load product list page' });
     }
-  );
+  });
 });
 
-// Login endpoint with server-side redirect
+// Login endpoint
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
-  // Validate form data
   if (!username || !password) {
+    if (req.accepts('html')) {
+      return res.status(400).sendFile(path.join(__dirname, 'public', 'login.html'));
+    }
     return res.status(400).json({ error: 'Username and password are required' });
   }
 
   try {
-    // Check if the user exists
-    let user = await knex('users')
-      .where({ username, password })
-      .first();
-
-    // If user doesn't exist, create a new one
+    let user = await knex('users').where({ username }).first();
     if (!user) {
+      const hashedPassword = await bcrypt.hash(password, 10);
       const [newUserId] = await knex('users').insert({
         username,
-        password,
+        password: hashedPassword,
       });
-      user = { id: newUserId, username, password };
+      user = { id: newUserId, username, password: hashedPassword };
+    } else if (!(await bcrypt.compare(password, user.password))) {
+      if (req.accepts('html')) {
+        return res.status(401).sendFile(path.join(__dirname, 'public', 'login.html'));
+      }
+      return res.status(401).json({ error: 'Invalid username or password' });
     }
 
-    req.session.userId = user.id;
+    const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1d' });
 
-    // Explicitly save the session before redirecting
-    req.session.save((err) => {
-      if (err) {
-        return res.status(500).json({ error: 'Failed to save session' });
-      }
-      res.redirect('/');
-    });
+    if (req.accepts('html')) {
+      res.cookie('jwt', token, {
+        secure: true,
+        sameSite: 'strict',
+      });
+      return res.redirect('/');
+    } else {
+      return res.json({ token });
+    }
   } catch (err) {
-    res.status(500).json({ error: 'Login failed' });
+    if (req.accepts('html')) {
+      return res.status(500).sendFile(path.join(__dirname, 'public', 'login.html'));
+    }
+    return res.status(500).json({ error: 'Login failed' });
   }
 });
 
 // Logout endpoint
 app.post('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.status(500).json({ error: 'Logout failed' });
-    }
-    res.redirect('/');
-  });
+  res.clearCookie('jwt');
+  if (req.accepts('html')) {
+    return res.redirect('/');
+  }
+  return res.json({ message: 'Logged out successfully' });
 });
 
 // Product list
-app.get('/products', async (req, res) => {
-  if (!req.session.userId) {
-    return res.redirect('/');
-  }
-
+app.get('/products', authenticateJWT, async (req, res) => {
   try {
     const products = await knex('products').select('*');
     res.json(products);
@@ -149,50 +133,30 @@ app.get('/products', async (req, res) => {
 });
 
 // View cart
-app.get('/cart', async (req, res) => {
-  if (!req.user_id) {
-    return res.status(401).send('Unauthorized: Please log in');
-  }
+app.get('/cart', authenticateJWT, async (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'cart.html'), (err) => {
+    if (err) {
+      console.error('Error serving cart.html:', err);
+      res.status(500).json({ error: 'Error loading cart list page' });
+    }
+  });
+});
 
+// List cart
+app.get('/cart/list', authenticateJWT, async (req, res) => {
   try {
     const cartItems = await knex('cart')
       .leftJoin('products', 'cart.product_id', 'products.id')
       .where('cart.user_id', req.user_id)
       .select('products.id', 'products.name', 'products.price', 'cart.quantity');
-    const cartHtml = cartItems.length > 0 && cartItems[0].name
-      ? cartItems.map(item => `<li>${item.name} - $${item.price} (Qty: ${item.quantity})</li>`).join('')
-      : '<li>No items in cart</li>';
-    res.send(`
-      <!DOCTYPE html>
-      <html>
-      <head><title>Cart Page</title></head>
-      <body>
-        <h1>Cart Page</h1>
-        <ul id="cart-items">${cartHtml}</ul>
-        <form id="checkout-form" action="/checkout" method="POST">
-          <button id="checkout-button">Proceed to Checkout</button>
-        </form>
-        <form id="clear-cart-form" action="/cart/clear" method="POST">
-          <button id="clear-cart-button">Clear Cart</button>
-        </form>
-        <a href="/">Back to Products</a>
-        <form action="/logout" method="POST">
-          <button type="submit">Logout</button>
-        </form>
-      </body>
-      </html>
-    `);
+    res.json(cartItems);
   } catch (err) {
-    res.status(500).send('Error loading cart');
+    res.status(500).json({ error: 'Error loading cart' });
   }
 });
 
 // Add to cart
-app.post('/cart/add', async (req, res) => {
-  if (!req.user_id) {
-    return res.status(401).json({ error: 'Unauthorized: Please log in' });
-  }
-
+app.post('/cart/add', authenticateJWT, async (req, res) => {
   try {
     const existingItem = await knex('cart')
       .where({ user_id: req.user_id, product_id: req.body.product_id })
@@ -215,10 +179,7 @@ app.post('/cart/add', async (req, res) => {
 });
 
 // Clear cart
-app.post('/cart/clear', async (req, res) => {
-  if (!req.user_id) {
-    return res.status(401).json({ error: 'Unauthorized: Please log in' });
-  }
+app.post('/cart/clear', authenticateJWT, async (req, res) => {
   try {
     const deletedRows = await knex('cart').where('user_id', req.user_id).del();
     res.status(200).json({ message: 'Cart cleared successfully' });
@@ -228,7 +189,7 @@ app.post('/cart/clear', async (req, res) => {
 });
 
 // Checkout
-app.post('/checkout', async (req, res) => {
+app.post('/checkout', authenticateJWT, async (req, res) => {
   res.send('Checkout Complete');
 });
 

@@ -1,3 +1,6 @@
 {
-    "dotnet-test-explorer.testProjectPath": "**/*.sln"
+  "dotnet-test-explorer.testProjectPath": "**/*.sln",
+  "cucumberJsTestExplorer.cwd": "EcommerceApiTests",
+  "cucumberJsTestExplorer.configFile": "cucumber.js",
+  "cucumberJsTestExplorer.profiles": ["default"]
 }
