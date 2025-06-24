@@ -10,7 +10,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret-key';
 
-
 // Configure HTTP server
 const protocol = process.env.PROTOCOL || 'https';
 const host = process.env.HOST || 'localhost';
