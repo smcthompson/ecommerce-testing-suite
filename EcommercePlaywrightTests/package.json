@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "pretest": "npx playwright install",
     "test": "npx playwright test"
   },
   "keywords": [],
