@@ -3,7 +3,7 @@ function Products() {
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    fetch('/products')
+    fetch('/products', { credentials: 'include' })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load products');
         return res.json();
@@ -16,6 +16,10 @@ function Products() {
     try {
       const res = await fetch('/cart/add', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
         body: JSON.stringify({ product_id: productId, quantity: 1 }),
       });
       const result = await res.json();

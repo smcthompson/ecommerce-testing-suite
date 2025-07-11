@@ -3,7 +3,7 @@ function Cart() {
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    fetch('/cart/list')
+    fetch('/cart/list', { credentials: 'include' })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load cart');
         return res.json();
@@ -15,7 +15,10 @@ function Cart() {
   const handleClearCart = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/cart/clear', { method: 'POST' });
+      const res = await fetch('/cart/clear', {
+        method: 'POST',
+        credentials: 'include',
+      });
       const data = await res.json();
       alert(data.message || data.error);
       setItems([]);
@@ -27,7 +30,10 @@ function Cart() {
   const handleCheckout = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/checkout', { method: 'POST' });
+      const res = await fetch('/checkout', {
+        method: 'POST',
+        credentials: 'include',
+      });
       const text = await res.text();
       alert(text);
       window.location.href = '/';
