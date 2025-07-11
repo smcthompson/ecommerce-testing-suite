@@ -71,9 +71,7 @@ function Cart() {
         <a href="/" data-auth className="block text-blue-500 hover:underline">
           Back to Products
         </a>
-        <form id="logout" method="POST" action="/logout" className="inline">
-          <button type="submit" className="text-blue-500 hover:underline">Logout</button>
-        </form>
+        {window.HandleLogout && <window.HandleLogout />}
       </div>
     </div>
   );

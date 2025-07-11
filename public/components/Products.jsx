@@ -34,9 +34,6 @@ function Products() {
       <h1 className="text-2xl font-bold mb-4">Products</h1>
       <nav className="mb-4">
         <a href="/cart" data-auth className="text-blue-500 hover:underline mr-4">Go to Cart</a>
-        <form id="logout" method="POST" action="/logout" className="inline">
-          <button type="submit" className="text-blue-500 hover:underline">Logout</button>
-        </form>
       </nav>
       {error && <p className="text-red-500">{error}</p>}
       <ul id="product-list" className="space-y-2">
@@ -52,6 +49,7 @@ function Products() {
           </li>
         ))}
       </ul>
+        {window.HandleLogout && <window.HandleLogout />}
     </div>
   );
 }
