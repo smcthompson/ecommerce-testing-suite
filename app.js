@@ -47,6 +47,17 @@ const authenticateJWT = (req, res, next) => {
   }
 };
 
+// Helper function to create a new user
+const createUser = async (username, password) => {
+  const hashedPassword = await bcrypt.hash(password, 10);
+  const [newUserId] = await knex('users').insert({
+    username,
+    password: hashedPassword,
+  });
+
+  return { id: newUserId, username, password: hashedPassword };
+}
+
 // Initialize Express app
 const app = express();
 app.use(express.json());
@@ -90,12 +101,7 @@ app.post('/login', async (req, res) => {
   try {
     let user = await knex('users').where({ username }).first();
     if (!user) {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const [newUserId] = await knex('users').insert({
-        username,
-        password: hashedPassword,
-      });
-      user = { id: newUserId, username, password: hashedPassword };
+      user = await createUser(username, password);
     } else if (!(await bcrypt.compare(password, user.password))) {
       if (req.accepts('html')) {
         return res.redirect('/login');
