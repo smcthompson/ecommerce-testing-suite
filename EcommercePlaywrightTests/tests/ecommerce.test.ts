@@ -32,7 +32,7 @@ test.describe('E-Commerce Site Tests', () => {
 
       if (isVisible) {
         await logoutButton.click();
-        await page.waitForURL(`${BASE_URL}/`);
+        await page.waitForURL(`${BASE_URL}/login`);
       }
 
       // Cleanup: clear cookies and local/session storage
@@ -111,7 +111,7 @@ test.describe('E-Commerce Site Tests', () => {
     await page.click('form#logout button');
 
     // Wait for navigation and DOM load
-    await page.waitForURL(`${BASE_URL}/`);
+    await page.waitForURL(`${BASE_URL}/login`);
     await page.waitForLoadState('domcontentloaded');
 
     // Wait until cookie is actually removed
