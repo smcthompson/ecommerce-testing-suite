@@ -26,17 +26,15 @@
   <script src="/components/Cart.jsx" type="text/babel"></script>
   <script type="text/babel">
     const { createRoot } = ReactDOM;
-    const { BrowserRouter, Routes, Route } = ReactRouterDOM;
+    const { BrowserRouter, Route } = ReactRouterDOM;
 
     function App() {
       return (
         <div className="container mx-auto p-4">
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Products />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/cart" element={<Cart />} />
-            </Routes>
+            <Route exact path="/" component={Products} />
+            <Route path="/login" component={Login} />
+            <Route path="/cart" component={Cart} />
           </BrowserRouter>
         </div>
       );
