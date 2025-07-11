@@ -82,7 +82,7 @@ app.get('/login', (req, res) => {
 app.get('/', authenticateJWT, async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
     if (err) {
-      res.status(500).json({ error: 'Failed to load product list page' });
+      res.status(500).json({ error: 'Failed to load page' });
     }
   });
 });
@@ -151,8 +151,8 @@ app.get('/products', authenticateJWT, async (req, res) => {
 app.get('/cart', authenticateJWT, async (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
     if (err) {
-      console.error('Error serving cart.html:', err);
-      res.status(500).json({ error: 'Error loading cart list page' });
+      console.error('Error serving index.html:', err);
+      res.status(500).json({ error: 'Error loading cart page' });
     }
   });
 });
