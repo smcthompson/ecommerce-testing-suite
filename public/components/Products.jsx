@@ -32,9 +32,6 @@ function Products() {
   return (
     <div>
       <h1 className="text-2xl font-bold mb-4">Products</h1>
-      <nav className="mb-4">
-        <a href="/cart" data-auth className="text-blue-500 hover:underline mr-4">Go to Cart</a>
-      </nav>
       {error && <p className="text-red-500">{error}</p>}
       <ul id="product-list" className="space-y-2">
         {products.map((p) => (
@@ -49,7 +46,10 @@ function Products() {
           </li>
         ))}
       </ul>
+      <nav className="mb-4">
+        <a href="/cart" data-auth className="text-blue-500 hover:underline mr-4">Go to Cart</a>
         {window.HandleLogout && <window.HandleLogout />}
+      </nav>
     </div>
   );
 }
