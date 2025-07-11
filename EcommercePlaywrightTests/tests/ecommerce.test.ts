@@ -17,7 +17,7 @@ test.describe('E-Commerce Site Tests', () => {
     await page.fill('input[name="username"]', username);
     await page.fill('input[name="password"]', '7357[U53R]');
     await page.click('button[type="submit"]');
-    await page.waitForURL(`${BASE_URL}/`);
+    await page.waitForLoadState('networkidle');
     await page.waitForSelector('#product-list li', { state: 'visible' });
     const items = await page.locator('#product-list li').count();
     expect(items).toBeGreaterThan(0);
@@ -32,7 +32,7 @@ test.describe('E-Commerce Site Tests', () => {
 
       if (isVisible) {
         await logoutButton.click();
-        await page.waitForURL(`${BASE_URL}/`);
+        await page.waitForURL(`${BASE_URL}/login`);
       }
 
       // Cleanup: clear cookies and local/session storage
@@ -72,12 +72,12 @@ test.describe('E-Commerce Site Tests', () => {
   });
 
   test('Cart navigation works', async ({ page }) => {
-    await page.click('#go-to-cart');
+    await page.getByText('Go to Cart').click();
     await page.waitForURL(`${BASE_URL}/cart`);
     await expect(page.locator('h1')).toHaveText('Cart Page');
     await expect(page.locator('#cart-items li')).toContainText('No items in cart');
     await expect(page.locator('#checkout')).toBeVisible();
-    await expect(page.locator('text=Back to Products')).toBeVisible();
+    await expect(page.getByText('Back to Products')).toBeVisible();
   });
 
   test('Add item to cart', async ({ page }) => {
@@ -85,7 +85,7 @@ test.describe('E-Commerce Site Tests', () => {
     const alert = await page.waitForEvent('dialog');
     expect(alert.message()).toContain('Item added to cart');
     await alert.accept();
-    await page.click('#go-to-cart');
+    await page.getByText('Go to Cart').click();
     await page.waitForURL(`${BASE_URL}/cart`);
     await expect(page.locator('#cart-items li')).not.toContainText('No items in cart');
     await expect(page.locator('#cart-items li')).toHaveCount(1);
@@ -96,7 +96,7 @@ test.describe('E-Commerce Site Tests', () => {
     const addAlert = await page.waitForEvent('dialog');
     expect(addAlert.message()).toContain('Item added to cart');
     await addAlert.accept();
-    await page.click('#go-to-cart');
+    await page.getByText('Go to Cart').click();
     await page.waitForURL(`${BASE_URL}/cart`);
     await page.click('form#checkout button');
     const checkoutAlert = await page.waitForEvent('dialog');
@@ -111,7 +111,7 @@ test.describe('E-Commerce Site Tests', () => {
     await page.click('form#logout button');
 
     // Wait for navigation and DOM load
-    await page.waitForURL(`${BASE_URL}/`);
+    await page.waitForURL(`${BASE_URL}/login`);
     await page.waitForLoadState('domcontentloaded');
 
     // Wait until cookie is actually removed

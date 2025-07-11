@@ -74,9 +74,12 @@ When('I request the product list without logging in', async function () {
 });
 
 Then('I should receive the login page', function () {
-  expect(this.response.status).to.be.oneOf([200, 401]);
+  expect(this.response.status).to.be.oneOf([200, 302, 401]);
   if (this.response.status === 200) {
-    expect(this.response.text).to.include('Login');
+    expect(this.response.text).to.include('root.render(<App />);');
+  } else if (this.response.status === 302) {
+    expect(this.response.headers.location).to.equal('/login');
+    expect(this.response.text).to.include('Found. Redirecting to /login');
   } else {
     expect(this.response.body).to.have.property('error').that.includes('Unauthorized');
   }
@@ -107,7 +110,7 @@ When('I request the cart page with cookies', async function () {
 
 Then('I should receive the cart page', function () {
   expect(this.response.status).to.equal(200);
-  expect(this.response.text).to.include('Cart Page');
+  expect(this.response.text).to.include('root.render(<App />);');
 });
 
 When('I request the cart list', async function () {

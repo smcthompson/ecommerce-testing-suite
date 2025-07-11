@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "cucumber-js"
+    "test": "cucumber-js",
+    "test::name": "cucumber-js --name",
+    "test::tag": "cucumber-js --tags"
   },
   "keywords": [],
   "author": "",

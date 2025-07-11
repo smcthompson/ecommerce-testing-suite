@@ -83,7 +83,7 @@ namespace EcommerceSeleniumTests
             PerformLogin();
 
             // Perform logout
-            wait.Until(d => driver.FindElement(By.CssSelector("form[action='/logout'] button"))).Click();
+            wait.Until(d => driver.FindElement(By.CssSelector("#logout button"))).Click();
 
             // Wait for redirect and verify login page
             wait.Until(d => d.PageSource.Contains("login"));
