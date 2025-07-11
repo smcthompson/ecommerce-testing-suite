@@ -28,7 +28,8 @@ const authenticateJWT = (req, res, next) => {
   }
   if (!token) {
     if (req.accepts('html')) {
-      return res.sendFile(path.join(__dirname, 'public', 'login.html'));
+      // Redirect to /login for unauthenticated HTML requests
+      return res.redirect('/login');
     }
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
   }
@@ -40,7 +41,7 @@ const authenticateJWT = (req, res, next) => {
   } catch (err) {
     console.error('JWT verification error:', err);
     if (req.accepts('html')) {
-      return res.sendFile(path.join(__dirname, 'public', 'login.html'));
+      return res.redirect('/login');
     }
     return res.status(403).json({ error: 'Unauthorized: Invalid token' });
   }
@@ -57,9 +58,18 @@ app.use(cors({
 }));
 app.use(compression());
 
-// Root route
+// Login route (serves index.html to let React handle Login.jsx)
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+    if (err) {
+      res.status(500).json({ error: 'Failed to load login page' });
+    }
+  });
+});
+
+// Root route with authentication
 app.get('/', authenticateJWT, async (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'products.html'), (err) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
     if (err) {
       res.status(500).json({ error: 'Failed to load product list page' });
     }
@@ -72,7 +82,7 @@ app.post('/login', async (req, res) => {
 
   if (!username || !password) {
     if (req.accepts('html')) {
-      return res.status(400).sendFile(path.join(__dirname, 'public', 'login.html'));
+      return res.redirect('/login');
     }
     return res.status(400).json({ error: 'Username and password are required' });
   }
@@ -88,7 +98,7 @@ app.post('/login', async (req, res) => {
       user = { id: newUserId, username, password: hashedPassword };
     } else if (!(await bcrypt.compare(password, user.password))) {
       if (req.accepts('html')) {
-        return res.status(401).sendFile(path.join(__dirname, 'public', 'login.html'));
+        return res.redirect('/login');
       }
       return res.status(401).json({ error: 'Invalid username or password' });
     }
@@ -106,7 +116,7 @@ app.post('/login', async (req, res) => {
     }
   } catch (err) {
     if (req.accepts('html')) {
-      return res.status(500).sendFile(path.join(__dirname, 'public', 'login.html'));
+      return res.redirect('/login');
     }
     return res.status(500).json({ error: 'Login failed' });
   }
@@ -133,7 +143,7 @@ app.get('/products', authenticateJWT, async (req, res) => {
 
 // View cart
 app.get('/cart', authenticateJWT, async (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'cart.html'), (err) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
     if (err) {
       console.error('Error serving cart.html:', err);
       res.status(500).json({ error: 'Error loading cart list page' });
@@ -192,8 +202,17 @@ app.post('/checkout', authenticateJWT, async (req, res) => {
   res.send('Checkout Complete');
 });
 
-// Static files after routes
+// Static files before catch-all route
 app.use(express.static('public'));
+
+// Catch-all route for SPA to serve index.html for client-side routing
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+    if (err) {
+      res.status(500).json({ error: 'Failed to load page' });
+    }
+  });
+});
 
 https.createServer(httpsOptions, app).listen(port, () => {
 });
