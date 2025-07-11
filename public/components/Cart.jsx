@@ -30,7 +30,7 @@ function Cart() {
       const res = await fetch('/checkout', { method: 'POST' });
       const text = await res.text();
       alert(text);
-      window.TokenManager.navigate('/');
+      window.location.href = '/';
     } catch (err) {
       alert('Could not complete checkout.');
     }

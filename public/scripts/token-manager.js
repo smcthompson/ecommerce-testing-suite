@@ -3,9 +3,6 @@ class TokenManager {
     // Initialize token from sessionStorage or fetch from cookie
     this.token = sessionStorage.getItem('jwt') || this.getTokenFromCookie();
     this.listeners = new Set();
-    this.initializeFetchInterceptor();
-    this.initializeNavigationInterceptor();
-    this.initializeFormHandlers();
     this.initializeCookieSync();
   }
 
@@ -46,106 +43,6 @@ class TokenManager {
   // Notify all listeners of a token change
   notifyListeners() {
     this.listeners.forEach((callback) => callback(this.token));
-  }
-
-  // Intercept fetch to add Authorization header
-  initializeFetchInterceptor() {
-    const originalFetch = window.fetch;
-    window.fetch = async (url, options = {}) => {
-      const headers = {
-        ...options.headers,
-        ...(this.token && { Authorization: `Bearer ${this.token}` }),
-        ...(options.method !== 'GET' && !options.headers?.['Content-Type'] && {
-          'Content-Type': 'application/json',
-        }),
-      };
-
-      try {
-        const response = await originalFetch(url, {
-          ...options,
-          headers,
-        });
-
-        // Handle unauthorized or forbidden responses
-        if (response.status === 401 || response.status === 403) {
-          this.setToken(null);
-          window.location.href = '/';
-          return response;
-        }
-
-        return response;
-      } catch (error) {
-        console.error('Fetch error:', error);
-        throw error;
-      }
-    };
-  }
-
-  // Intercept navigation for <a> tags
-  initializeNavigationInterceptor() {
-    // Handle <a> tag clicks
-    document.addEventListener('click', async (event) => {
-      const anchor = event.target.closest('a[data-auth]');
-      if (anchor) {
-        event.preventDefault();
-        const href = anchor.getAttribute('href');
-        await this.navigateWithToken(href);
-      }
-    });
-  }
-
-  // Handle form submissions (login, logout)
-  initializeFormHandlers() {
-    document.addEventListener('submit', async (event) => {
-      const form = event.target;
-      if (form.id === 'login') {
-        event.preventDefault();
-        const data = new FormData(form);
-        try {
-          const res = await fetch('/login', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-              Accept: 'text/html',
-            },
-            body: new URLSearchParams(data).toString(),
-          });
-          if (res.redirected) {
-            // Sync token from cookie after server-side redirect
-            const cookieToken = this.getTokenFromCookie();
-            if (cookieToken) {
-              this.setToken(cookieToken);
-            }
-            window.location.href = res.url;
-          } else {
-            const result = await res.text();
-            alert('Login failed: ' + result);
-          }
-        } catch (err) {
-          console.error('Login error:', err);
-          alert('Login failed');
-        }
-      } else if (form.id === 'logout') {
-        event.preventDefault();
-        try {
-          const res = await fetch('/logout', {
-            method: 'POST',
-            headers: {
-              Accept: 'text/html',
-            },
-          });
-          if (res.ok) {
-            this.setToken(null);
-            window.location.href = '/';
-          } else {
-            alert('Logout failed');
-          }
-        } catch (err) {
-          console.error('Logout error:', err);
-          alert('Logout failed');
-        }
-      }
-    });
   }
 
   // Periodically sync token with cookie
