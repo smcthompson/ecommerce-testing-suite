@@ -85,6 +85,9 @@
     "vary": "^1.1.2"
   },
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "start": "node app.js",
     "test": "cd EcommerceApiTests && npm test && cd ../EcommercePlaywrightTests && npm test && cd ../EcommerceSeleniumTests && dotnet test"
   },
   "repository": {
