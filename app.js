@@ -70,8 +70,8 @@ app.use(cors({
 app.use(compression());
 
 // Login route (serves index.html to let React handle Login.jsx)
-app.get('/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+app.get('/api/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'), (err) => {
     if (err) {
       res.status(500).json({ error: 'Failed to load login page' });
     }
@@ -80,7 +80,7 @@ app.get('/login', (req, res) => {
 
 // Root route with authentication
 app.get('/', authenticateJWT, async (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'), (err) => {
     if (err) {
       res.status(500).json({ error: 'Failed to load page' });
     }
@@ -88,7 +88,7 @@ app.get('/', authenticateJWT, async (req, res) => {
 });
 
 // Login endpoint
-app.post('/login', async (req, res) => {
+app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
@@ -129,8 +129,8 @@ app.post('/login', async (req, res) => {
 });
 
 // Logout endpoint
-app.post('/logout', (req, res) => {
   res.clearCookie('jwt');
+app.post('/api/logout', (req, res) => {
   if (req.accepts('html')) {
     return res.redirect('/');
   }
@@ -138,7 +138,7 @@ app.post('/logout', (req, res) => {
 });
 
 // Product list
-app.get('/products', authenticateJWT, async (req, res) => {
+app.get('/api/products', authenticateJWT, async (req, res) => {
   try {
     const products = await knex('products').select('*');
     res.json(products);
@@ -148,8 +148,8 @@ app.get('/products', authenticateJWT, async (req, res) => {
 });
 
 // View cart
-app.get('/cart', authenticateJWT, async (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
+app.get('/api/cart', authenticateJWT, async (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'), (err) => {
     if (err) {
       console.error('Error serving index.html:', err);
       res.status(500).json({ error: 'Error loading cart page' });
@@ -158,7 +158,7 @@ app.get('/cart', authenticateJWT, async (req, res) => {
 });
 
 // List cart
-app.get('/cart/list', authenticateJWT, async (req, res) => {
+app.get('/api/cart/list', authenticateJWT, async (req, res) => {
   try {
     const cartItems = await knex('cart')
       .leftJoin('products', 'cart.product_id', 'products.id')
@@ -171,7 +171,7 @@ app.get('/cart/list', authenticateJWT, async (req, res) => {
 });
 
 // Add to cart
-app.post('/cart/add', authenticateJWT, async (req, res) => {
+app.post('/api/cart/add', authenticateJWT, async (req, res) => {
   try {
     const existingItem = await knex('cart')
       .where({ user_id: req.user_id, product_id: req.body.product_id })
@@ -194,7 +194,7 @@ app.post('/cart/add', authenticateJWT, async (req, res) => {
 });
 
 // Clear cart
-app.post('/cart/clear', authenticateJWT, async (req, res) => {
+app.post('/api/cart/clear', authenticateJWT, async (req, res) => {
   try {
     const deletedRows = await knex('cart').where('user_id', req.user_id).del();
     res.status(200).json({ message: 'Cart cleared successfully' });
@@ -204,21 +204,12 @@ app.post('/cart/clear', authenticateJWT, async (req, res) => {
 });
 
 // Checkout
-app.post('/checkout', authenticateJWT, async (req, res) => {
+app.post('/api/checkout', authenticateJWT, async (req, res) => {
   res.send('Checkout Complete');
 });
 
 // Static files before catch-all route
-app.use(express.static('public'));
-
-// Catch-all route for SPA to serve index.html for client-side routing
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'), (err) => {
-    if (err) {
-      res.status(500).json({ error: 'Failed to load page' });
-    }
-  });
-});
+app.use(express.static('dist'));
 
 https.createServer(httpsOptions, app).listen(port, () => {
 });
