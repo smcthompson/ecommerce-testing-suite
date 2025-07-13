@@ -1,4 +1,4 @@
-function Cart() {
+export default function Cart() {
   const [items, setItems] = React.useState([]);
   const [error, setError] = React.useState(null);
 

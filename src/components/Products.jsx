@@ -1,4 +1,4 @@
-function Products() {
+export default function Products() {
   const [products, setProducts] = React.useState([]);
   const [error, setError] = React.useState(null);
 

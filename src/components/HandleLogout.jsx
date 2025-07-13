@@ -1,4 +1,4 @@
-function HandleLogout() {
+export default function HandleLogout() {
   const handleLogout = async (e) => {
     e.preventDefault();
     try {
@@ -17,6 +17,3 @@ function HandleLogout() {
     </form>
   );
 }
-
-// UMD export for browser
-window.HandleLogout = HandleLogout;
