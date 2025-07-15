@@ -22,9 +22,9 @@ const httpsOptions = {
 // Middleware to verify JWT
 const authenticateJWT = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
+
   if (!token) {
     if (req.accepts('html')) {
-      // Redirect to /login for unauthenticated HTML requests
       return res.redirect('/login');
     }
     return res.status(401).json({ error: 'Unauthorized: No token provided' });
@@ -71,6 +71,7 @@ app.post('/api/login', async (req, res) => {
     if (req.accepts('html')) {
       return res.redirect('/login');
     }
+
     return res.status(400).json({ error: 'Username and password are required' });
   }
 
@@ -82,6 +83,7 @@ app.post('/api/login', async (req, res) => {
       if (req.accepts('html')) {
         return res.redirect('/login');
       }
+
       return res.status(401).json({ error: 'Invalid username or password' });
     }
 
@@ -96,6 +98,7 @@ app.post('/api/login', async (req, res) => {
     if (req.accepts('html')) {
       return res.redirect('/login');
     }
+
     return res.status(500).json({ error: 'Login failed' });
   }
 });
