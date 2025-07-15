@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 
-function App() {
   const [products, setProducts] = useState([]);
 
   useEffect(() => {
@@ -9,6 +8,7 @@ function App() {
       .then((data) => setProducts(data));
   }, []);
 
+const App = () => {
   return (
     <div>
       <h1>Products</h1>

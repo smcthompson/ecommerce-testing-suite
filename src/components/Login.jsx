@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import useTokenManager from '../hooks/useTokenManager';
 
-export default function Login() {
+const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const { login } = useTokenManager();
@@ -36,4 +36,6 @@ export default function Login() {
       </form>
     </div>
   );
-}
+};
+
+export default Login;

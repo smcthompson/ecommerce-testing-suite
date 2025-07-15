@@ -1,4 +1,3 @@
-export default function Products() {
   const [products, setProducts] = React.useState([]);
   const [error, setError] = React.useState(null);
 
@@ -6,6 +5,7 @@ export default function Products() {
     fetch('/products', { credentials: 'include' })
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load products');
+const Products = () => {
         return res.json();
       })
       .then((data) => setProducts(data))
@@ -52,4 +52,6 @@ export default function Products() {
       </nav>
     </div>
   );
-}
+};
+
+export default Products;

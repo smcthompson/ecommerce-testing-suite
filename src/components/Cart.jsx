@@ -1,9 +1,9 @@
-export default function Cart() {
   const [items, setItems] = React.useState([]);
   const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
     fetch('/cart/list', { credentials: 'include' })
+const Cart = () => {
       .then((res) => {
         if (!res.ok) throw new Error('Failed to load cart');
         return res.json();
@@ -76,3 +76,5 @@ export default function Cart() {
     </div>
   );
 }
+
+export default Cart;
