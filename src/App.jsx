@@ -1,26 +1,17 @@
-import React, { useState, useEffect } from 'react';
-
-  const [products, setProducts] = useState([]);
-
-  useEffect(() => {
-    fetch('/products')
-      .then((res) => res.json())
-      .then((data) => setProducts(data));
-  }, []);
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Products from './components/Products';
+import Login from './components/Login';
+import Cart from './components/Cart';
 
 const App = () => {
   return (
-    <div>
-      <h1>Products</h1>
-      <ul>
-        {products.map((product) => (
-          <li key={product.id}>
-            {product.name} - ${product.price}
-          </li>
-        ))}
-      </ul>
-      <a href="/cart">Go to Cart</a>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Products />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/cart" element={<Cart />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
