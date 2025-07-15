@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useTokenManager } from '../hooks/useTokenManager';
+import { useState } from 'react';
+import useTokenManager from '../hooks/useTokenManager';
 
 export default function Login() {
   const [username, setUsername] = useState('');

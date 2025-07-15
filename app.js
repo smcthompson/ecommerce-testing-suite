@@ -63,24 +63,6 @@ app.use(cors({
 }));
 app.use(compression());
 
-// Login route (serves index.html to let React handle Login.jsx)
-app.get('/api/login', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'), (err) => {
-    if (err) {
-      res.status(500).json({ error: 'Failed to load login page' });
-    }
-  });
-});
-
-// Root route with authentication
-app.get('/', authenticateJWT, async (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'), (err) => {
-    if (err) {
-      res.status(500).json({ error: 'Failed to load page' });
-    }
-  });
-});
-
 // Login endpoint
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
