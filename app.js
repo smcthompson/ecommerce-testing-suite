@@ -1,7 +1,6 @@
 const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
 const knex = require('knex')(require('./knexfile'));
 const path = require('path');
 const https = require('https');
@@ -22,10 +21,7 @@ const httpsOptions = {
 
 // Middleware to verify JWT
 const authenticateJWT = (req, res, next) => {
-  let token = req.headers.authorization?.split(' ')[1];
-  if (!token) {
-    token = req.cookies?.jwt;
-  }
+  const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
     if (req.accepts('html')) {
       // Redirect to /login for unauthenticated HTML requests
@@ -62,10 +58,8 @@ const createUser = async (username, password) => {
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cookieParser());
 app.use(cors({
   origin: `${protocol}://${host}`,
-  credentials: true,
 }));
 app.use(compression());
 
@@ -112,10 +106,6 @@ app.post('/api/login', async (req, res) => {
     const token = jwt.sign({ userId: user.id }, JWT_SECRET, { expiresIn: '1d' });
 
     if (req.accepts('html')) {
-      res.cookie('jwt', token, {
-        secure: true,
-        sameSite: 'strict',
-      });
       return res.redirect('/');
     } else {
       return res.json({ token });
@@ -129,7 +119,6 @@ app.post('/api/login', async (req, res) => {
 });
 
 // Logout endpoint
-  res.clearCookie('jwt');
 app.post('/api/logout', (req, res) => {
   if (req.accepts('html')) {
     return res.redirect('/');
