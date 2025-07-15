@@ -131,19 +131,6 @@ app.get('/api/cart', authenticateJWT, async (req, res) => {
   });
 });
 
-// List cart
-app.get('/api/cart/list', authenticateJWT, async (req, res) => {
-  try {
-    const cartItems = await knex('cart')
-      .leftJoin('products', 'cart.product_id', 'products.id')
-      .where('cart.user_id', req.user_id)
-      .select('products.id', 'products.name', 'products.price', 'cart.quantity');
-    res.json(cartItems);
-  } catch (err) {
-    res.status(500).json({ error: 'Error loading cart' });
-  }
-});
-
 // Add to cart
 app.post('/api/cart/add', authenticateJWT, async (req, res) => {
   try {
@@ -164,6 +151,19 @@ app.post('/api/cart/add', authenticateJWT, async (req, res) => {
     res.status(200).json({ message: 'Item added to cart' });
   } catch (err) {
     res.status(500).json({ error: 'Failed to add item to cart' });
+  }
+});
+
+// List cart
+app.get('/api/cart/list', authenticateJWT, async (req, res) => {
+  try {
+    const cartItems = await knex('cart')
+      .leftJoin('products', 'cart.product_id', 'products.id')
+      .where('cart.user_id', req.user_id)
+      .select('products.id', 'products.name', 'products.price', 'cart.quantity');
+    res.json(cartItems);
+  } catch (err) {
+    res.status(500).json({ error: 'Error loading cart' });
   }
 });
 
