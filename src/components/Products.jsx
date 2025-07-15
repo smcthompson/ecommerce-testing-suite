@@ -30,27 +30,29 @@ const Products = () => {
   };
 
   return (
-    <div>
-      <h1 className="text-2xl font-bold mb-4">Products</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <ul id="product-list" className="space-y-2">
-        {products.map((p) => (
-          <li key={p.id} className="flex justify-between items-center p-2 border rounded">
-            <span>{p.name} - ${p.price}</span>
-            <button
-              onClick={() => handleAddToCart(p.id)}
-              className="bg-blue-500 text-white px-4 py-1 rounded hover:bg-blue-600"
-            >
-              Add to Cart
-            </button>
-          </li>
-        ))}
-      </ul>
-      <nav className="mb-4">
-        <a href="/cart" data-auth className="text-blue-500 hover:underline mr-4">Go to Cart</a>
-        {window.HandleLogout && <window.HandleLogout />}
+    <section>
+      <h1>Products</h1>
+      {products.length === 0 ? (
+        <div>No products found.</div>
+      ) : (
+        <ul id="product-list">
+          {products.map(product => (
+            <li key={product.id}>
+              <strong>{product.name}</strong>
+              <button
+                onClick={() => handleAddToCart(product.id)}
+              >
+                ${product.price}
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
+      <nav>
+        <a href="/cart">Go to Cart</a>
+        <Logout />
       </nav>
-    </div>
+    </section>
   );
 };
 
