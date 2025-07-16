@@ -43,7 +43,7 @@ const Products = () => {
 
   const handleAddToCart = async (productId) => {
     try {
-      const res = await fetch('/cart/add', {
+      const res = await fetch('/api/cart/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
