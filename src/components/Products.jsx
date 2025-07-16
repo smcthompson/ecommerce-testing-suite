@@ -42,6 +42,12 @@ const Products = () => {
   if (error) return <section><h1>Error: {error}</h1></section>;
 
   const handleAddToCart = async (productId) => {
+    if (!getToken()) navigate('/login');
+
+    const token = getToken();
+    if (!token) return;
+    setLoading(true);
+
     try {
       const res = await fetch('/api/cart/add', {
         method: 'POST',
@@ -49,7 +55,6 @@ const Products = () => {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        credentials: 'include',
         body: JSON.stringify({ product_id: productId, quantity: 1 }),
       });
       const result = await res.json();
