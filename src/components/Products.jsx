@@ -32,7 +32,7 @@ const Products = () => {
         setError(null);
       })
       .catch(err => {
-        setError(err.message);
+        setError(`Could not load products: ${err.message}`);
         setProducts([]);
       })
       .finally(() => setLoading(false));
