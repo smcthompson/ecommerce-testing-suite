@@ -61,6 +61,8 @@ const Products = () => {
       alert(result.message || result.error);
     } catch (error) {
       alert('Failed to add to cart.');
+    } finally {
+      setLoading(false);
     }
   };
 
