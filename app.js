@@ -159,6 +159,23 @@ app.get('/api/cart/list', authenticateJWT, async (req, res) => {
   }
 });
 
+// Remove from cart
+app.post('/api/cart/remove', authenticateJWT, async (req, res) => {
+  try {
+    const existingItem = await knex('cart')
+      .where({ user_id: req.user_id, product_id: req.body.product_id })
+      .first();
+    if (existingItem) {
+      await knex('cart')
+        .where({ user_id: req.user_id, product_id: req.body.product_id })
+        .decrement('quantity', req.body.quantity);
+    }
+    res.status(200).json({ message: 'Item removed from cart' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to remove item from cart' });
+  }
+});
+
 // Clear cart
 app.post('/api/cart/clear', authenticateJWT, async (req, res) => {
   try {

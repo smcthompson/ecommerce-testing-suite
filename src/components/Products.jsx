@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logout from './Logout';
 import useTokenManager from '../hooks/useTokenManager';
+import useCartActions from '../hooks/useCartActions';
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -9,6 +10,7 @@ const Products = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const { getToken } = useTokenManager();
+  const { handleAddToCart } = useCartActions();
 
   useEffect(() => {
     if (!getToken()) navigate('/login');
@@ -40,31 +42,6 @@ const Products = () => {
 
   if (loading) return <section><h1>Loading products...</h1></section>;
   if (error) return <section><h1>Error: {error}</h1></section>;
-
-  const handleAddToCart = async (productId) => {
-    if (!getToken()) navigate('/login');
-
-    const token = getToken();
-    if (!token) return;
-    setLoading(true);
-
-    try {
-      const res = await fetch('/api/cart/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ product_id: productId, quantity: 1 }),
-      });
-      const result = await res.json();
-      alert(result.message || result.error);
-    } catch (error) {
-      alert('Failed to add to cart.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <section>

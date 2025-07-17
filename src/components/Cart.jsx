@@ -2,50 +2,28 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Logout from './Logout';
 import useTokenManager from '../hooks/useTokenManager';
+import useCartActions from '../hooks/useCartActions';
 
-    fetch('/cart/list', { credentials: 'include' })
 const Cart = () => {
-      .then((res) => {
-        if (!res.ok) throw new Error('Failed to load cart');
-        return res.json();
-      })
-      .then((data) => setItems(data))
-      .catch((err) => setError('Could not load cart.'));
-  }, []);
   const navigate = useNavigate();
   const { getToken } = useTokenManager();
+  const {
+    items,
+    loading,
+    error,
+    fetchCartItems,
+    handleAddToCart,
+    handleRemoveFromCart,
+    handleClearCart,
+    handleCheckout,
+  } = useCartActions();
+
   useEffect(() => {
     if (!getToken()) navigate('/login');
 
-  const handleClearCart = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch('/cart/clear', {
-        method: 'POST',
-        credentials: 'include',
-      });
-      const data = await res.json();
-      alert(data.message || data.error);
-      setItems([]);
-    } catch (err) {
-      alert('Could not clear cart.');
-    }
-  };
+    fetchCartItems();
+  }, []);
 
-  const handleCheckout = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await fetch('/checkout', {
-        method: 'POST',
-        credentials: 'include',
-      });
-      const text = await res.text();
-      alert(text);
-      window.location.href = '/';
-    } catch (err) {
-      alert('Could not complete checkout.');
-    }
-  };
   if (loading) return <section><h1>Loading cart...</h1></section>;
   if (error) return <section><h1>Error: {error}</h1></section>;
 
