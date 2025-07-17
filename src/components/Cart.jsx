@@ -29,10 +29,10 @@ const Cart = () => {
 
   return (
     <div>
-        {items.length > 0 && items[0].name ? (
       <h1>Cart Page</h1>
       {error && <p>{error}</p>}
       <ul id="cart-items">
+        {items && items.length > 0 && items[0].name ? (
           items.map((item) => (
               {item.name} - ${item.price} (Qty: {item.quantity})
             <li key={item.id}>
