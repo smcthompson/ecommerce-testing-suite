@@ -4,11 +4,11 @@ import Logout from './Logout';
 import useTokenManager from '../hooks/useTokenManager';
 
 const Products = () => {
-  const { getToken } = useTokenManager();
-  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+  const { getToken } = useTokenManager();
 
   useEffect(() => {
     if (!getToken()) navigate('/login');
