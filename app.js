@@ -123,16 +123,6 @@ app.get('/api/products', authenticateJWT, async (req, res) => {
   }
 });
 
-// View cart
-app.get('/api/cart', authenticateJWT, async (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'), (err) => {
-    if (err) {
-      console.error('Error serving index.html:', err);
-      res.status(500).json({ error: 'Error loading cart page' });
-    }
-  });
-});
-
 // Add to cart
 app.post('/api/cart/add', authenticateJWT, async (req, res) => {
   try {
