@@ -1,7 +1,8 @@
-  const [items, setItems] = React.useState([]);
-  const [error, setError] = React.useState(null);
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Logout from './Logout';
+import useTokenManager from '../hooks/useTokenManager';
 
-  React.useEffect(() => {
     fetch('/cart/list', { credentials: 'include' })
 const Cart = () => {
       .then((res) => {
@@ -11,6 +12,10 @@ const Cart = () => {
       .then((data) => setItems(data))
       .catch((err) => setError('Could not load cart.'));
   }, []);
+  const navigate = useNavigate();
+  const { getToken } = useTokenManager();
+  useEffect(() => {
+    if (!getToken()) navigate('/login');
 
   const handleClearCart = async (e) => {
     e.preventDefault();
@@ -41,6 +46,8 @@ const Cart = () => {
       alert('Could not complete checkout.');
     }
   };
+  if (loading) return <section><h1>Loading cart...</h1></section>;
+  if (error) return <section><h1>Error: {error}</h1></section>;
 
   return (
     <div>
