@@ -50,7 +50,7 @@ const Products = () => {
         <div>No products found.</div>
       ) : (
         <ul id="product-list">
-          {products.map(product => (
+          {products.map((product) => (
             <li key={product.id}>
               <strong>{product.name}</strong>
               <button
