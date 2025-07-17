@@ -11,6 +11,7 @@ const Products = () => {
   const navigate = useNavigate();
   const { getToken } = useTokenManager();
   const { handleAddToCart } = useCartActions();
+  const [ transactionLoading, setTransactionLoading ] = useState(false);
 
   useEffect(() => {
     if (!getToken()) navigate('/login');
@@ -41,6 +42,7 @@ const Products = () => {
   }, []);
 
   if (loading) return <section><h1>Loading products...</h1></section>;
+  if (transactionLoading) return <section><h1>Adding to cart...</h1></section>;
   if (error) return <section><h1>Error: {error}</h1></section>;
 
   return (
@@ -54,7 +56,12 @@ const Products = () => {
             <li key={product.id}>
               <strong>{product.name}</strong>
               <button
-                onClick={() => handleAddToCart(product.id)}
+                onClick={async () => {
+                  setTransactionLoading(true);
+                  await handleAddToCart(product.id, true);
+                  setTransactionLoading(false);
+                }}
+                disabled={transactionLoading}
               >
                 ${product.price}
               </button>
