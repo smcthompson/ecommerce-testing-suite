@@ -29,36 +29,36 @@ const Cart = () => {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold mb-4">Cart Page</h1>
-      {error && <p className="text-red-500">{error}</p>}
-      <ul id="cart-items" className="space-y-2 mb-4">
         {items.length > 0 && items[0].name ? (
+      <h1>Cart Page</h1>
+      {error && <p>{error}</p>}
+      <ul id="cart-items">
           items.map((item) => (
-            <li key={item.id} className="p-2 border rounded">
               {item.name} - ${item.price} (Qty: {item.quantity})
+            <li key={item.id}>
             </li>
           ))
         ) : (
           <li>No items in cart</li>
         )}
       </ul>
-      <div className="space-y-4">
+      <nav>
         <form id="checkout" onSubmit={handleCheckout}>
-          <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600 mb-2">
+          <button type="submit">
             Proceed to Checkout
           </button>
         </form>
         <form id="cart-clear" onSubmit={handleClearCart}>
-          <button type="submit" className="w-full bg-red-500 text-white p-2 rounded hover:bg-red-600 mb-2">
+          <button type="submit">
             Clear Cart
           </button>
         </form>
-        <a href="/" data-auth className="block text-blue-500 hover:underline">
+        <a href="/">
           Back to Products
         </a>
-      </div>
     </div>
         <Logout />
+      </nav>
   );
 };
 
