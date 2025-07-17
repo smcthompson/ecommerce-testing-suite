@@ -28,7 +28,7 @@ const Cart = () => {
   if (error) return <section><h1>Error: {error}</h1></section>;
 
   return (
-    <div>
+    <section>
       <h1>Cart Page</h1>
       {error && <p>{error}</p>}
       <ul id="cart-items">
@@ -56,9 +56,9 @@ const Cart = () => {
         <a href="/">
           Back to Products
         </a>
-    </div>
         <Logout />
       </nav>
+    </section>
   );
 };
 
