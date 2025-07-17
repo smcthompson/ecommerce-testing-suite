@@ -60,6 +60,6 @@ const Cart = () => {
     </div>
         <Logout />
   );
-}
+};
 
 export default Cart;
