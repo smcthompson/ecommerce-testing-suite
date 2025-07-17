@@ -1,17 +1,10 @@
 import useTokenManager from "../hooks/useTokenManager";
 
 const Logout = () => {
-  const { logout } = useTokenManager();
-
-  const handleLogout = async (e) => {
-    e.preventDefault();
-    const success = await logout();
-
-    if (!success) alert("Logout failed");
-  };
+  const { handleLogout } = useTokenManager();
 
   return (
-    <form id="logout" onSubmit={handleLogout}>
+    <form id="logout" onSubmit={(e) => handleLogout(e)}>
       <button type="submit">Logout</button>
     </form>
   );

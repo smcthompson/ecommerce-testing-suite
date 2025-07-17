@@ -4,19 +4,12 @@ import useTokenManager from '../hooks/useTokenManager';
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const { login } = useTokenManager();
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const success = await login(username, password);
-
-    if (!success) alert('Login failed');
-  };
+  const { handleLogin } = useTokenManager();
 
   return (
     <section>
       <h1>Login</h1>
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto p-4">
+      <form onSubmit={(e) => handleLogin(e, username, password)} className="max-w-md mx-auto p-4">
         <input
           id="username"
           name="username"

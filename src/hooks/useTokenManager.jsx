@@ -5,6 +5,22 @@ const useTokenManager = () => {
   const [token, setToken] = useState(sessionStorage.getItem('jwt') || null);
   const navigate = useNavigate();
 
+  const getToken = () => token;
+
+  const handleLogin = async (e, username, password) => {
+    e.preventDefault();
+    const success = await login(username, password);
+
+    if (!success) alert('Login failed');
+  };
+
+  const handleLogout = async (e) => {
+    e.preventDefault();
+    const success = await logout();
+
+    if (!success) alert("Logout failed");
+  };
+
   const login = async (username, password) => {
     try {
       const response = await fetch('/api/login', {
@@ -63,9 +79,7 @@ const useTokenManager = () => {
     }
   };
 
-  const getToken = () => token;
-
-  return { login, logout, getToken };
+  return { getToken, handleLogin, handleLogout };
 };
 
 export default useTokenManager;

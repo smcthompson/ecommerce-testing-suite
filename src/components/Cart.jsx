@@ -78,9 +78,9 @@ const Cart = () => {
         <a href="/" data-auth className="block text-blue-500 hover:underline">
           Back to Products
         </a>
-        {window.HandleLogout && <window.HandleLogout />}
       </div>
     </div>
+        <Logout />
   );
 }
 
