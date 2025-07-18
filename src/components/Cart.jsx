@@ -34,8 +34,19 @@ const Cart = () => {
       <ul id="cart-items">
         {items && items.length > 0 && items[0].name ? (
           items.map((item) => (
-              {item.name} - ${item.price} (Qty: {item.quantity})
             <li key={item.id}>
+              <strong>{item.name}</strong> - ${item.price}
+              <button
+                onClick={() => handleRemoveFromCart(item.id)}
+              >
+                -
+              </button>
+              Qty: {item.quantity}
+              <button
+                onClick={() => handleAddToCart(item.id)}
+              >
+                +
+              </button>
             </li>
           ))
         ) : (

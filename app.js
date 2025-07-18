@@ -162,13 +162,23 @@ app.get('/api/cart/list', authenticateJWT, async (req, res) => {
 // Remove from cart
 app.post('/api/cart/remove', authenticateJWT, async (req, res) => {
   try {
+    const { product_id, quantity } = req.body;
     const existingItem = await knex('cart')
-      .where({ user_id: req.user_id, product_id: req.body.product_id })
+      .where({ user_id: req.user_id, product_id })
       .first();
     if (existingItem) {
-      await knex('cart')
-        .where({ user_id: req.user_id, product_id: req.body.product_id })
-        .decrement('quantity', req.body.quantity);
+      const newQuantity = existingItem.quantity - quantity;
+      if (newQuantity > 0) {
+        // Decrement the quantity
+        await knex('cart')
+          .where({ user_id: req.user_id, product_id })
+          .update({ quantity: newQuantity });
+      } else {
+        // Remove the item if quantity is zero or less
+        await knex('cart')
+          .where({ user_id: req.user_id, product_id })
+          .del();
+      }
     }
     res.status(200).json({ message: 'Item removed from cart' });
   } catch (err) {
