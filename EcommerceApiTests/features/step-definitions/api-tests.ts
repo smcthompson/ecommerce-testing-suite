@@ -111,9 +111,15 @@ Then('the cart should contain {int} products', function (count: number) {
   expect(this.response.body[0].quantity).to.equal(count);
 });
 
+When('I remove a product from the cart', async function () {
   this.response = await request(baseUrl)
+    .post('/api/cart/remove')
     .set('Authorization', `Bearer ${this.token}`)
+    .set('Content-Type', 'application/json')
     .send({ product_id: 1, quantity: 1 })
+    .agent(agent);
+  });
+  
     .set('Content-Type', 'application/json')
     .agent(agent);
 });
