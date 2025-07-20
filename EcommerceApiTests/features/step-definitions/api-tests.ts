@@ -33,8 +33,8 @@ Given('the API is running', async function () {
 Given('I am logged in', async function () {
   const username = generateUniqueUsername();
   const loginRes = await request(baseUrl)
-    .post('/login')
     .send({ username, password: '7357[U53R]' })
+    .post('/api/login')
     .set('Content-Type', 'application/json')
     .set('Accept', 'application/json')
     .agent(agent);
@@ -62,7 +62,7 @@ Given('I am logged in via HTML form', async function () {
 
 When('I request the product list', async function () {
   this.response = await request(baseUrl)
-    .get('/products')
+    .get('/api/products')
     .set('Authorization', `Bearer ${this.token}`)
     .agent(agent);
 });
@@ -97,6 +97,7 @@ Then('the list should contain {int} products', function (count: number) {
 When('I request the cart page', async function () {
   this.response = await request(baseUrl)
     .get('/cart')
+    .post('/api/cart/add')
     .set('Authorization', `Bearer ${this.token}`)
     .agent(agent);
 });
@@ -115,7 +116,7 @@ Then('I should receive the cart page', function () {
 
 When('I request the cart list', async function () {
   this.response = await request(baseUrl)
-    .get('/cart/list')
+    .get('/api/cart/list')
     .set('Authorization', `Bearer ${this.token}`)
     .agent(agent);
 });
@@ -132,7 +133,6 @@ Then('the cart should be empty', function () {
 
 When('I add a product to the cart', async function () {
   this.response = await request(baseUrl)
-    .post('/cart/add')
     .set('Authorization', `Bearer ${this.token}`)
     .send({ product_id: 1, quantity: 1 })
     .set('Content-Type', 'application/json')
@@ -147,6 +147,7 @@ Then('I should receive a success message', function () {
 When('I clear the cart', async function () {
   this.response = await request(baseUrl)
     .post('/cart/clear')
+    .post('/api/checkout')
     .set('Authorization', `Bearer ${this.token}`)
     .agent(agent);
 });
@@ -158,7 +159,7 @@ Then('I should receive a cart cleared message', function () {
 
 When('I request the checkout page', async function () {
   this.response = await request(baseUrl)
-    .post('/checkout')
+    .post('/api/cart/add')
     .set('Authorization', `Bearer ${this.token}`)
     .agent(agent);
 });
