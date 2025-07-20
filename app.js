@@ -203,7 +203,7 @@ app.post('/api/cart/clear', authenticateJWT, async (req, res) => {
 
 // Checkout
 app.post('/api/checkout', authenticateJWT, async (req, res) => {
-  res.send('Checkout Complete');
+  res.status(200).json({ message: 'Checkout Complete' });
 });
 
 // Static files before catch-all route
