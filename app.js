@@ -124,6 +124,9 @@ app.get('/api/products', authenticateJWT, async (req, res) => {
 // Add to cart
 app.post('/api/cart/add', authenticateJWT, async (req, res) => {
   try {
+    const itemValid = await knex('products').where({ id: req.body.product_id }).first();
+    if (!itemValid) throw new Error('Invalid product ID');
+
     const existingItem = await knex('cart')
       .where({ user_id: req.user_id, product_id: req.body.product_id })
       .first();
@@ -161,6 +164,10 @@ app.get('/api/cart/list', authenticateJWT, async (req, res) => {
 app.post('/api/cart/remove', authenticateJWT, async (req, res) => {
   try {
     const { product_id, quantity } = req.body;
+
+    const itemValid = await knex('products').where({ id: product_id }).first();
+    if (!itemValid) throw new Error('Invalid product ID');
+
     const existingItem = await knex('cart')
       .where({ user_id: req.user_id, product_id })
       .first();
