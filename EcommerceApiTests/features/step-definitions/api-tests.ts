@@ -122,6 +122,13 @@ When('I remove a product from the cart', async function () {
   
     .set('Content-Type', 'application/json')
     .agent(agent);
+  When('I clear the cart', async function () {
+    this.response = await request(baseUrl)
+      .post('/api/cart/clear')
+      .set('Authorization', `Bearer ${this.token}`)
+      .set('Content-Type', 'application/json')
+      .send({})
+      .agent(agent);
 });
 
   expect(this.response.status).to.equal(200);
