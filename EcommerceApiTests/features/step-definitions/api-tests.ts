@@ -172,7 +172,13 @@ Then('I add an invalid product to the cart', async function () {
     .agent(agent);
 });
 
+Then('I remove an invalid product from the cart', async function () {
+  this.response = await request(baseUrl)
+    .post('/api/cart/remove')
+    .set('Content-Type', 'application/json')
     .set('Authorization', `Bearer ${this.token}`)
+    .set('Accept', 'application/json')
+    .send({ product_id: 27, quantity: 2 })
     .agent(agent);
 });
 
