@@ -162,8 +162,16 @@ Then('I should receive an error message', function () {
   }
 });
 
+Then('I add an invalid product to the cart', async function () {
   this.response = await request(baseUrl)
     .post('/api/cart/add')
+    .set('Content-Type', 'application/json')
+    .set('Authorization', `Bearer ${this.token}`)
+    .set('Accept', 'application/json')
+    .send({ product_id: 27, quantity: 2 })
+    .agent(agent);
+});
+
     .set('Authorization', `Bearer ${this.token}`)
     .agent(agent);
 });
