@@ -2,7 +2,6 @@ const express = require('express');
 const compression = require('compression');
 const cors = require('cors');
 const knex = require('knex')(require('./knexfile'));
-const path = require('path');
 const https = require('https');
 const fs = require('fs');
 const bcrypt = require('bcrypt');
@@ -13,7 +12,6 @@ const JWT_SECRET = process.env.JWT_SECRET || 'your-jwt-secret-key';
 const protocol = process.env.PROTOCOL || 'https';
 const host = process.env.HOST || 'localhost';
 const port = process.env.PORT || 3000;
-const apiRoot = `${protocol}://${host}:${port}`;
 const httpsOptions = {
   key: fs.readFileSync('certs/iis-localhost.key'),
   cert: fs.readFileSync('certs/iis-localhost.crt'),
