@@ -145,6 +145,21 @@ When('I check out', async function () {
     .agent(agent);
 });
 
+// Shop Errors Steps
+Then('I should receive an error message', function () {
+  console.log(`Scenario ${this.scenario.name} has status ${this.response.status}`);
+  expect(this.response.status).to.be.oneOf([ 403, 500 ]);
+  switch (this.scenario.name) {
+    case 'Add to cart without token':
+      expect(this.response.body.error).to.equal('Unauthorized: Invalid token');
+      break;
+    case 'Add invalid product to cart':
+      expect(this.response.body.error).to.equal('Failed to add item to cart');
+      break;
+    case 'I remove an invalid product from the cart':
+      expect(this.response.body.error).to.equal('Failed to remove item from cart');
+      break;
+  }
 });
 
   this.response = await request(baseUrl)
