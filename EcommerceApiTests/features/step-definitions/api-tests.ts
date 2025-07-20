@@ -131,7 +131,9 @@ When('I remove a product from the cart', async function () {
       .agent(agent);
 });
 
+Then('the cart should be empty', function () {
   expect(this.response.status).to.equal(200);
+  expect(this.response.body).to.be.an('array').that.is.empty;
 });
 
   this.response = await request(baseUrl)
