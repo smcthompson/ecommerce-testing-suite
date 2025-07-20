@@ -26,7 +26,7 @@ Given('the API is running', async function () {
       .agent(agent);
     expect(res.status).to.be.oneOf([200, 302, 401]);
   } catch (error) {
-    throw new Error(`API is not running: ${String(error)}`);
+    throw new Error(`API is not running: ${error}`);
   }
 });
 
