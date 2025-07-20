@@ -107,6 +107,8 @@ Then('I should receive a list of cart items', function () {
   expect(this.response.body).to.be.an('array');
 });
 
+Then('the cart should contain {int} products', function (count: number) {
+  expect(this.response.body[0].quantity).to.equal(count);
 });
 
   this.response = await request(baseUrl)
