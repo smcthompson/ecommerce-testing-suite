@@ -77,7 +77,22 @@ When('I add products to the cart', async function () {
   this.response = await req;
 });
 
+Then('I should receive a success message', function () {
   expect(this.response.status).to.equal(200);
+  switch (this.scenario.name) {
+    case 'Add an item to the cart':
+      expect(this.response.body.message).to.equal('Item added to cart');
+      break;
+    case 'Remove an item from the cart':
+      expect(this.response.body.message).to.equal('Item removed from cart');
+      break;
+    case 'Clear the cart':
+      expect(this.response.body.message).to.equal('Cart cleared successfully');
+      break;
+    case 'Complete Checkout':
+      expect(this.response.body.message).to.equal('Checkout Complete');
+      break;
+  }
 });
 
 When('I request the cart list', async function () {
