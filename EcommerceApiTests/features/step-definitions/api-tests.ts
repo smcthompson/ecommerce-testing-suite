@@ -23,6 +23,7 @@ Before(function (scenario) {
   this.scenario = scenario.pickle;
 });
 
+// Shop Flow Background
 Given('the API is running', async function () {
   try {
     const res = await request(baseUrl)
@@ -37,10 +38,10 @@ Given('the API is running', async function () {
 Given('I am logged in', async function () {
   const username = generateUniqueUsername();
   const loginRes = await request(baseUrl)
-    .send({ username, password: '7357[U53R]' })
     .post('/api/login')
     .set('Content-Type', 'application/json')
     .set('Accept', 'application/json')
+    .send({ username, password: '7357[U53R]' })
     .agent(agent);
   
   expect(loginRes.status).to.equal(200);
@@ -48,6 +49,7 @@ Given('I am logged in', async function () {
   this.token = loginRes.body.token;
 });
 
+// Shop Flow Steps
 When('I request the product list', async function () {
   this.response = await request(baseUrl)
     .get('/api/products')
@@ -118,10 +120,8 @@ When('I remove a product from the cart', async function () {
     .set('Content-Type', 'application/json')
     .send({ product_id: 1, quantity: 1 })
     .agent(agent);
-  });
+});
   
-    .set('Content-Type', 'application/json')
-    .agent(agent);
   When('I clear the cart', async function () {
     this.response = await request(baseUrl)
       .post('/api/cart/clear')
