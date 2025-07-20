@@ -1,4 +1,4 @@
-import { Given, When, Then } from '@cucumber/cucumber';
+import { Before, Given, When, Then } from '@cucumber/cucumber';
 import request from 'supertest';
 import { expect } from 'chai';
 import { v4 as uuidv4 } from 'uuid';
@@ -18,6 +18,10 @@ const certOptions = {
 // Create a custom HTTPS agent with the certificates
 const agent = new https.Agent(certOptions);
 const baseUrl = process.env.BASE_URL || 'https://localhost:3000';
+
+Before(function (scenario) {
+  this.scenario = scenario.pickle;
+});
 
 Given('the API is running', async function () {
   try {
