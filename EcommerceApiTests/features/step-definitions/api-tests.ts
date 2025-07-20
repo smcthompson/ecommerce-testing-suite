@@ -55,12 +55,9 @@ When('I request the product list', async function () {
     .agent(agent);
 });
 
-Then('I should receive a list of products', function () {
+Then('I should receive a list of {int} products', function (count: number) {
   expect(this.response.status).to.equal(200);
   expect(this.response.body).to.be.an('array');
-});
-
-Then('the list should contain {int} products', function (count: number) {
   expect(this.response.body).to.have.lengthOf(count);
 });
 
