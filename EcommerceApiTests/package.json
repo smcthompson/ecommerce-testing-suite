@@ -5,7 +5,7 @@
   "scripts": {
     "test": "cucumber-js",
     "test::name": "cucumber-js --name",
-    "test::tag": "cucumber-js --tags"
+    "test::tags": "cucumber-js --tags"
   },
   "keywords": [],
   "author": "",
