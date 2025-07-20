@@ -136,9 +136,12 @@ Then('the cart should be empty', function () {
   expect(this.response.body).to.be.an('array').that.is.empty;
 });
 
+When('I check out', async function () {
   this.response = await request(baseUrl)
     .post('/api/checkout')
     .set('Authorization', `Bearer ${this.token}`)
+    .set('Content-Type', 'application/json')
+    .send({})
     .agent(agent);
 });
 
