@@ -61,10 +61,20 @@ Then('I should receive a list of {int} products', function (count: number) {
   expect(this.response.body).to.have.lengthOf(count);
 });
 
+When('I add products to the cart', async function () {
+  let req = request(baseUrl)
     .post('/api/cart/add')
+    .set('Content-Type', 'application/json')
     .set('Authorization', `Bearer ${this.token}`)
+    .send({ product_id: 1, quantity: 2 })
     .agent(agent);
 
+  // Conditionally add Accept header for specific scenario
+  if (this.scenario && this.scenario.name === 'Add to cart with invalid token') {
+    req = req.set('Accept', 'application/json');
+  }
+
+  this.response = await req;
 });
 
   expect(this.response.status).to.equal(200);
